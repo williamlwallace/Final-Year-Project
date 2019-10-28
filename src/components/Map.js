@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import update from 'immutability-helper';
 import mapboxgl from 'mapbox-gl';
 import { 
            interpolateWarm,
@@ -107,14 +108,51 @@ class Map extends Component {
     componentDidUpdate(prevProps) {
         const { pickedGridId, 
 		selectedGridId, 
-		institutionYearKeywordSearchResult, 
+		institutionYearSearchResult, 
 		timelineSelectionStart, 
 		timelineSelectionStop, 
 		yearFocus } = this.props;
+        if (prevProps.institutionYearSearchResult !== institutionYearSearchResult) {
+            this.updateInstitutionPointSource();
+	}
     }
 
     componentWillUnmount() {
         this.map.remove();
+    }
+
+    updateInstitutionPointSource() {
+        const { institutionYearSearchResult, timelineSelectionStart, timelineSelectionEnd } = this.props;
+        let _start = timelineSelectionStart;
+        let _end = timelineSelectionEnd;
+        if (timelineSelectionStart === null || timelineSelectionEnd === null) {
+            _start = 1900;
+            _end = 2020;
+        }
+        let featureCollection = { "type": "FeatureCollection" };
+        let maxScore = 0.0;
+        let features = institutionYearSearchResult["features"].map ( (f) => {
+            let score = 0.0;
+            for (const year in f["properties"]["scoresByYear"]) {
+                if ((+year >= _start) && (+year <= _end)) {
+                    score = score + f["properties"]["scoresByYear"][year]["score"];
+                }
+            }
+            if (maxScore < score) maxScore = score;
+            return { "type": "Feature",
+		     "geometry": { "type": "Point", "coordinates": f.geometry.coordinates },
+                     "properties": { "weight" : score } }
+	});
+        console.log(features);
+        if (maxScore === 0.0) {
+            this.map.getSource("institutionPointSource").setData({ "type": "FeatureCollection", "features": [] });
+	} else {
+            for (var i = 0; i < features.length; i++) {
+                features[i]["properties"]["weight"] = features[i]["properties"]["weight"] / maxScore;
+            }
+            featureCollection["features"] = features;
+            this.map.getSource("institutionPointSource").setData(featureCollection);
+	}
     }
 
     render() {
