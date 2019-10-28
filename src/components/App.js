@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import logo from '../images/logo.svg';
 import './App.css';
 import Home from './Home';
 import Foo from './Foo';

@@ -21,15 +21,15 @@ const styles = theme => ({
         marginRight: 20
     },
     button: {
-        margin: theme.spacing.unit,
+        margin: theme.spacing(1),
     },
     appBar: {
         background: theme.palette.primary[500],
         opacity: 0.95,
     },
     textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
     },
 });
 
