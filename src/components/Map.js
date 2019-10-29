@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import update from 'immutability-helper';
 import mapboxgl from 'mapbox-gl';
 import { 
            interpolateWarm,
@@ -35,7 +34,8 @@ class Map extends Component {
     componentDidMount() {
         this.map = new mapboxgl.Map({
             container: this.mapContainer,
-            style: 'mapbox://styles/mapbox/outdoors-v9'
+            //style: 'mapbox://styles/mapbox/outdoors-v9'
+            style: 'mapbox://styles/mapbox/dark-v10'
         });
         var theMap = this.map;
 
@@ -65,23 +65,23 @@ class Map extends Component {
                         ["linear"],
                         ["zoom"],
                         0, 1,
-                        9, 4
+                        9, 3
                     ],
                     // Adjust the heatmap radius by zoom level
                     "heatmap-radius": [
                         "interpolate",
                         ["linear"],
                         ["zoom"],
-                        0, 0.5,
-                        8, 32
+                        0, 2,
+                        9, 32
                     ],
                     // Transition from heatmap to circle layer by zoom level
                     "heatmap-opacity": [
                         "interpolate",
                         ["linear"],
                         ["zoom"],
-                        6, 1,
-                        8, 0
+                        7, 1,
+                        9, 0
                     ],
                     // Color ramp for heatmap.  Domain is 0 (low) to 1 (high).
                     // Begin color ramp at 0-stop with a 0-transparancy color
@@ -99,6 +99,72 @@ class Map extends Component {
                     ],
                 },
             }, 'waterway-label');
+
+            this.map.addLayer({
+                "id": "keyword-points",
+                "type": "circle",
+                "source": "institutionPointSource",
+                "minzoom": 7,
+                "paint": {
+                    // Size circle radius by weight and zoom level
+                    "circle-radius": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        7, [
+                            "interpolate",
+                            ["linear"],
+                            ["get", "weight"],
+                            0, 1,
+                            1, 4
+                        ],
+                        16, [
+                            "interpolate",
+                            ["linear"],
+                            ["get", "weight"],
+                            0, 5,
+                            1, 50
+                        ]
+		    ],
+                    // Color circle by weight
+                    "circle-color": [
+                        "interpolate",
+                        ["linear"],
+                        ["get", "weight"],
+                        0, "rgba(33,102,172,0.6)",
+                        1, "rgb(178,24,43)"
+                    ],
+                    "circle-stroke-color": "white",
+                    "circle-stroke-width": 1,
+                    // Transition from heatmap to circle layer by zoom level
+                    "circle-opacity": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        7, 0,
+                        8, 1
+                    ]
+                }
+            }, 'waterway-label');
+
+            this.map.addLayer({
+                "id": "institution-labels",
+                "type": "symbol",
+                "source": "institutionPointSource",
+                "minzoom": 7,
+                "layout": {
+                    "text-field": ['format',
+                        ['get', 'name'], { 'font-scale': 0.8 },
+                    ],
+                    "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+                    "text-anchor": "bottom"
+                },
+                "paint": {
+                    "text-color": "#fdf",
+                    //"text-halo-color": "#fff",
+                    //"text-halo-width": 1
+                },
+            });
 	});
 
         // Force immediate re-render now that the map is created
@@ -110,11 +176,15 @@ class Map extends Component {
 		selectedGridId, 
 		institutionYearSearchResult, 
 		timelineSelectionStart, 
-		timelineSelectionStop, 
+		timelineSelectionEnd, 
 		yearFocus } = this.props;
         if (prevProps.institutionYearSearchResult !== institutionYearSearchResult) {
             this.updateInstitutionPointSource();
 	}
+        if ((prevProps.timelineSelectionStart !== timelineSelectionStart) ||
+            (prevProps.timelineSelectionEnd !== timelineSelectionEnd)) {
+            this.updateInstitutionPointSource();
+        }
     }
 
     componentWillUnmount() {
@@ -123,9 +193,15 @@ class Map extends Component {
 
     updateInstitutionPointSource() {
         const { institutionYearSearchResult, timelineSelectionStart, timelineSelectionEnd } = this.props;
+
+	if ((institutionYearSearchResult == null) || (institutionYearSearchResult["features"] == null)) {
+            this.map.getSource("institutionPointSource").setData({ "type": "FeatureCollection", "features": [] });
+            return;
+	}
+
         let _start = timelineSelectionStart;
         let _end = timelineSelectionEnd;
-        if (timelineSelectionStart === null || timelineSelectionEnd === null) {
+        if (timelineSelectionStart == null || timelineSelectionEnd == null) {
             _start = 1900;
             _end = 2020;
         }
@@ -141,9 +217,12 @@ class Map extends Component {
             if (maxScore < score) maxScore = score;
             return { "type": "Feature",
 		     "geometry": { "type": "Point", "coordinates": f.geometry.coordinates },
-                     "properties": { "weight" : score } }
+                     "properties": { 
+                         "weight" : score,
+                         "name" : f["properties"]["name"]
+                     } 
+            };
 	});
-        console.log(features);
         if (maxScore === 0.0) {
             this.map.getSource("institutionPointSource").setData({ "type": "FeatureCollection", "features": [] });
 	} else {

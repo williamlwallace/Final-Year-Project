@@ -11,6 +11,7 @@ import Map from './Map';
 import Timeline from './Timeline';
 import TopNResults from './TopNResults';
 import SearchField from './SearchField';
+import YearSlider from './YearSlider';
 
 const styles = theme => ({
     flex: {
@@ -55,6 +56,7 @@ class Home extends Component {
                             <Typography variant="h6" gutterBottom color="inherit" className={classes.flex}>
 	                        COKI Exploration
                             </Typography>
+                            <YearSlider />
 	                    <SearchField />
                         </Toolbar>
                     </AppBar>
