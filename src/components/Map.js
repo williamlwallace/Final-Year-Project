@@ -101,7 +101,7 @@ class Map extends Component {
             }, 'waterway-label');
 
             this.map.addLayer({
-                "id": "keyword-points",
+                "id": "grid-circles",
                 "type": "circle",
                 "source": "institutionPointSource",
                 "minzoom": 7,
@@ -165,6 +165,36 @@ class Map extends Component {
                     //"text-halo-width": 1
                 },
             });
+
+
+            // Create logic to handle user input events on map
+
+            // Toggle the selected cell
+            this.map.on("click", "grid-circles", (e) => {
+                if (e.features.length > 0) {
+                    console.log(e.features[0]);
+                    this.props.setOrToggleSelectedGridId(e.features[0].properties.id);
+                } else {
+                    this.props.setOrToggleSelectedGridId(null);
+                }
+            });
+
+            // Turn off selected cell if click is not on a Grid circle
+            this.map.on("click", (e) => {
+                let fs = this.map.queryRenderedFeatures(e.point);
+                if (fs.length > 0) {
+                    let inGridCircle = false;
+                    for (var i = 0; i < fs.length; i++) {
+                        if (fs[i].layer && fs[i].layer.id && (fs[i].layer.id === "grid-circles")) {
+                            inGridCircle = true;
+                            break;
+                        }
+                    }
+                    if (!inGridCircle) this.props.setOrToggleSelectedGridId(null);
+                } else {
+                    this.props.setOrToggleSelectedGridId(null);
+                }
+            });
 	});
 
         // Force immediate re-render now that the map is created
@@ -219,7 +249,8 @@ class Map extends Component {
 		     "geometry": { "type": "Point", "coordinates": f.geometry.coordinates },
                      "properties": { 
                          "weight" : score,
-                         "name" : f["properties"]["name"]
+                         "name" : f["properties"]["name"],
+                         "id" : f["properties"]["gridId"]
                      } 
             };
 	});
@@ -263,6 +294,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
     return ({
+        setOrToggleSelectedGridId: (gridId) => { dispatch(setOrToggleMapSelectedGridId(gridId)) },
     });
 }
 
