@@ -7,12 +7,12 @@ export function setMapPickedGridId(pickedGridId) {
     }
 }
 
-export function setOrToggleMapSelectedGridId(selectedGridId) {
+export function setOrToggleMapSelectedGridId(gridId) {
     return (dispatch, getState) => {
         const { map } = getState();
         const { selectedGridId } = map;
 
-        if (selectedHexCell === cell) {
+        if (selectedGridId === gridId) {
             dispatch ({
                 type: types.SET_OR_TOGGLE_MAP_SELECTED_GRID_ID,
                 selectedGridId: null
@@ -20,7 +20,7 @@ export function setOrToggleMapSelectedGridId(selectedGridId) {
         } else {
             dispatch ({
                 type: types.SET_OR_TOGGLE_MAP_SELECTED_GRID_ID,
-                selectedGridId
+                selectedGridId: gridId
             });
         }
     }

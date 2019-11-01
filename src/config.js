@@ -42,6 +42,7 @@ export const firebaseAuth = firebase.auth;
 // connect to the verticle middleware web socket event bus
 const eventBus = new EventBus('http://localhost:8080/eventbus');
 eventBus.enableReconnect(true);
+console.log(eventBus);
 export { eventBus };
 
 export default config
