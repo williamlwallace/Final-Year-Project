@@ -33,7 +33,7 @@ export function doInstitutionYearKeywordSearch() {
         const eb = eventBus;
         let payload = { 
             "query" : query,
-            "size" : 10000
+            //"size" : 10000
         };
         eb.send('InstitutionYear.Query', payload, (response, json) => {
             if (json.body) {
