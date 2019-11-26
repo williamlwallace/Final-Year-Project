@@ -7,6 +7,23 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import StarIcon from '@material-ui/icons/Star';
+
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+
+import Grid from '@material-ui/core/Grid';
+import Divider from '@material-ui/core/Divider';
+
 import { doDOISearch } from '../store/actions/queryActions';
 
 const styles = theme => ({
@@ -15,13 +32,14 @@ const styles = theme => ({
     },
     root: {
         width: '100%',
+        backgroundColor: theme.palette.background.paper,
     },
     paper: {
         marginTop: 0,
         width: '100%',
         overflowX: 'auto',
         marginBottom: 0,
-        maxHeight: 290, 
+        maxHeight: 500, 
         overflow: 'auto',
         'pointer-events': 'auto',
     },
@@ -32,6 +50,17 @@ const styles = theme => ({
         backgroundColor: "#fff",
         position: "sticky",
         top: 0
+    },
+    listSection: {
+        backgroundColor: 'inherit',
+    },
+    ul: {
+        backgroundColor: 'inherit',
+        padding: 0,
+    },
+    li: {
+        paddingTop: '2px',
+        paddingBottom: '2px',
     }
 });
 
@@ -55,7 +84,7 @@ class TopNResults extends Component {
             margin: '0px', 
             backgroundColor: 'rgba(255,255,255,0.0)',
             position: 'fixed',
-            width: '180px',
+            width: '380px',
             height: '290px',
             top: 70,
             right: 5,
@@ -63,23 +92,56 @@ class TopNResults extends Component {
             zIndex: 30,
             pointerEvents: 'none',
         }
+        const style_list = {
+            marginTop: 0,
+            width: '100%',
+            overflowX: 'auto',
+            marginBottom: 0,
+            maxHeight: 500, 
+            overflow: 'auto',
+            'pointer-events': 'auto',
+        }
+
+        const style_top = {
+            margin: '5px',
+        }
+
         if (doiSearchResult && doiSearchResult.results) {
         return ( 
             <div className={(doiSearchResult && doiSearchResult.results) ? '' : classes.hidden}>
                 <div className={classes.root} style={style}>
                     <Paper className={classes.paper}>
-                        <Table className={classes.table} size="small">
-                            <TableHead>
-                                <TableCell className={classes.head}>{doiSearchResult.total} results</TableCell>
-                            </TableHead>
-                            <TableBody>
-                                {doiSearchResult.results.map( (row, index) => (
-                                    <TableRow key={row.source.doi}>
-                                        <TableCell align="left">{index + 1}. <a target="_blank" href={`https://doi.org/${row.source.doi}`}>{row.source.title[0]}</a></TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                        <div style={style_top}>
+                            <Grid container alignItems="center">
+                            <Grid item xs>
+                                <Typography gutterBottom variant="h6">
+                                University of the World
+                                </Typography>
+                            </Grid>
+                            <Grid item>
+                                <Typography gutterBottom variant="h7">
+                                {doiSearchResult.total} results
+                                </Typography>
+                            </Grid>
+                            </Grid>
+                        </div>
+
+                        <Divider variant="middle" />
+
+                        <List className={classes.root} subheader={<li />} style={style_list}>
+                            {[... new Set(doiSearchResult.results.map( data => data.source.published_year))].sort().reverse().map(sectionId => (
+                                <li key={`section-${sectionId}`} className={classes.listSection}>
+                                <ul className={classes.ul}>
+                                    <ListSubheader>{`${sectionId}`}</ListSubheader>
+                                    {doiSearchResult.results.filter(function(publication) {return publication.source.published_year == sectionId;}).map( (row, index) => (
+                                    <ListItem key={row.source.doi}>
+                                        <ListItemText primary={`${row.source.title[0]}`} secondary={`${row.source.journal_name}, 355 citations`} />
+                                    </ListItem>
+                                    ))}
+                                </ul>
+                                </li>
+                            ))}
+                        </List>
                     </Paper>
                 </div>
             </div> 
