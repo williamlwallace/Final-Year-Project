@@ -61,7 +61,10 @@ const styles = theme => ({
     li: {
         paddingTop: '2px',
         paddingBottom: '2px',
-    }
+    },
+    inline: {
+        display: 'inline',
+    },
 });
 
 
@@ -75,6 +78,42 @@ class TopNResults extends Component {
            (prevProps.selectedGridId !== selectedGridId)) {
            doDOISearch(selectedGridId);
        }
+    }
+
+    renderUrl(source) {
+        let url = "https://doi.org/"+source.doi;
+	if (typeof source.url_for_pdf !== "undefined") {
+            url = source.url_for_pdf;
+	} else if (typeof source.url_for_landing_page !== "undefined") {
+            url = source.url_for_landing_page;
+	}
+        return url;
+    }
+
+    renderAuthors(source, maxNumber) {
+        let authorsText = "";
+        if (typeof source.authors !== "undefined") {
+            if (source.authors.length > maxNumber) {
+                authorsText = source.authors.slice(0, maxNumber).join(", ") + "...";
+	    } else {
+                authorsText = source.authors.join(", ");
+	    }
+        }
+        return authorsText;
+    }
+
+    renderPublication(source) {
+       let pubText = "";
+       if (typeof source.journal_name !== "undefined") {
+           pubText += source.journal_name;
+       }
+       if (typeof source.citation_count !== "undefined") {
+           if (typeof source.journal_name !== "undefined") {
+               pubText += ", ";
+	   }
+           pubText += source.citation_count + " citations";
+       }
+       return pubText;
     }
 
     render() {
@@ -115,7 +154,7 @@ class TopNResults extends Component {
                             <Grid container alignItems="center">
                             <Grid item xs>
                                 <Typography gutterBottom variant="h6">
-                                University of the World
+                                {doiSearchResult.institution_name}
                                 </Typography>
                             </Grid>
                             <Grid item>
@@ -135,7 +174,27 @@ class TopNResults extends Component {
                                     <ListSubheader>{`${sectionId}`}</ListSubheader>
                                     {doiSearchResult.results.filter(function(publication) {return publication.source.published_year == sectionId;}).map( (row, index) => (
                                     <ListItem key={row.source.doi}>
-                                        <ListItemText primary={`${row.source.title[0]}`} secondary={`${row.source.journal_name}, 355 citations`} />
+                                        <ListItemText 
+					    primary={
+			                        <React.Fragment>
+                                                    <a href={this.renderUrl(row.source)} _target="blank">
+						        {row.source.title[0]}
+						    </a>
+                                                </React.Fragment>
+					    } 
+					    secondary={
+					        <React.Fragment>
+						    <Typography
+						        component="span"
+						        variant="body2"
+						        className={classes.inline}
+						        color="textPrimary"
+						    >{this.renderAuthors(row.source, 3)}</Typography>
+						    <br/>
+					            {this.renderPublication(row.source)}
+					        </React.Fragment>
+					    } 
+					/>
                                     </ListItem>
                                     ))}
                                 </ul>
