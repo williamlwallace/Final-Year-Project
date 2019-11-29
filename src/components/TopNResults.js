@@ -71,10 +71,14 @@ const styles = theme => ({
 class TopNResults extends Component {
 
     componentDidUpdate(prevProps) {
-       const { doDOISearch, selectedGridId, timelineSelectionStart, timelineSelectionEnd, institutionYearSearchResult } = this.props;
+       const { doDOISearch, 
+	       selectedGridId, 
+	       yearSliderSelectionStart, 
+	       yearSliderSelectionEnd, 
+	       institutionYearSearchResult } = this.props;
        if ((prevProps.institutionYearSearchResult !== institutionYearSearchResult) || 
-           (prevProps.timelineSelectionStart !== timelineSelectionStart) ||
-           (prevProps.timelineSelectionEnd !== timelineSelectionEnd) ||
+           (prevProps.yearSliderSelectionStart !== yearSliderSelectionStart) ||
+           (prevProps.yearSliderSelectionEnd !== yearSliderSelectionEnd) ||
            (prevProps.selectedGridId !== selectedGridId)) {
            doDOISearch(selectedGridId);
        }
@@ -168,11 +172,11 @@ class TopNResults extends Component {
                         <Divider variant="middle" />
 
                         <List className={classes.root} subheader={<li />} style={style_list}>
-                            {[... new Set(doiSearchResult.results.map( data => data.source.published_year))].sort().reverse().map(sectionId => (
+                            {[...new Set(doiSearchResult.results.map( data => data.source.published_year))].sort().reverse().map(sectionId => (
                                 <li key={`section-${sectionId}`} className={classes.listSection}>
                                 <ul className={classes.ul}>
                                     <ListSubheader>{`${sectionId}`}</ListSubheader>
-                                    {doiSearchResult.results.filter(function(publication) {return publication.source.published_year == sectionId;}).map( (row, index) => (
+                                    {doiSearchResult.results.filter(function(publication) {return publication.source.published_year === sectionId;}).map( (row, index) => (
                                     <ListItem key={row.source.doi}>
                                         <ListItemText 
 					    primary={
@@ -217,8 +221,8 @@ const mapStateToProps = state => {
         doiSearchResult: state.queryResults.doiSearchResult,
         pickedGridId: state.map.pickedGridId,
         selectedGridId: state.map.selectedGridId,
-        timelineSelectionStart: state.timeline.selectionStart,
-        timelineSelectionEnd: state.timeline.selectionEnd,
+        yearSliderSelectionStart: state.yearSlider.selectionStart,
+        yearSliderSelectionEnd: state.yearSlider.selectionEnd,
     }
 }
 

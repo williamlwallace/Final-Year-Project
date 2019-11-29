@@ -4,6 +4,7 @@ import searchField from './searchFieldReducer';
 import map from './mapReducer';
 import queryResults from './queryResultsReducer';
 import timeline from './timelineReducer';
+import yearSlider from './yearSliderReducer';
 import auth from './authReducer';
 import { connectRouter } from 'connected-react-router'
 
@@ -16,5 +17,6 @@ export default (history) => combineReducers({
     map,
     queryResults,
     timeline,
+    yearSlider,
 })
 

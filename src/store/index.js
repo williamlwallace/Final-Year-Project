@@ -34,7 +34,7 @@ export default function configureStore() {
     const persistorConfig = {
         key: 'root',
         storage,
-        blacklist: [ 'auth', 'connection', 'initialization', 'queryResults', 'map', 'searchField', 'timeline' ]
+        blacklist: [ 'auth', 'connection', 'initialization', 'queryResults', 'map', 'searchField', 'timeline', 'yearSlider' ]
     }
 
     const reducer = persistReducer(persistorConfig, rootReducer(history))

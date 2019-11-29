@@ -24,7 +24,10 @@ export default {
 	selectionStart: null,
         selectionEnd: null,
         yearFocus: null,
-        type: "year",
         tbars: {}, // the values for each rect in timeline
+    },
+    yearSlider: {
+        selectionStart: null,
+        selectionEnd: null,
     }
 }

@@ -205,14 +205,14 @@ class Map extends Component {
         const { pickedGridId, 
 		selectedGridId, 
 		institutionYearSearchResult, 
-		timelineSelectionStart, 
-		timelineSelectionEnd, 
+		yearSliderSelectionStart, 
+		yearSliderSelectionEnd, 
 		yearFocus } = this.props;
         if (prevProps.institutionYearSearchResult !== institutionYearSearchResult) {
             this.updateInstitutionPointSource();
 	}
-        if ((prevProps.timelineSelectionStart !== timelineSelectionStart) ||
-            (prevProps.timelineSelectionEnd !== timelineSelectionEnd)) {
+        if ((prevProps.yearSliderSelectionStart !== yearSliderSelectionStart) ||
+            (prevProps.yearSliderSelectionEnd !== yearSliderSelectionEnd)) {
             this.updateInstitutionPointSource();
         }
     }
@@ -222,16 +222,16 @@ class Map extends Component {
     }
 
     updateInstitutionPointSource() {
-        const { institutionYearSearchResult, timelineSelectionStart, timelineSelectionEnd } = this.props;
+        const { institutionYearSearchResult, yearSliderSelectionStart, yearSliderSelectionEnd } = this.props;
 
 	if ((institutionYearSearchResult == null) || (institutionYearSearchResult["features"] == null)) {
             this.map.getSource("institutionPointSource").setData({ "type": "FeatureCollection", "features": [] });
             return;
 	}
 
-        let _start = timelineSelectionStart;
-        let _end = timelineSelectionEnd;
-        if (timelineSelectionStart == null || timelineSelectionEnd == null) {
+        let _start = yearSliderSelectionStart;
+        let _end = yearSliderSelectionEnd;
+        if (yearSliderSelectionStart == null || yearSliderSelectionEnd == null) {
             _start = 1900;
             _end = 2020;
         }
@@ -286,8 +286,8 @@ const mapStateToProps = state => {
         institutionYearSearchResult: state.queryResults.institutionYearSearchResult,
         pickedGridId: state.map.pickedGridId,
         selectedGridId: state.map.selectedGridId,
-        timelineSelectionStart: state.timeline.selectionStart,
-        timelineSelectionEnd: state.timeline.selectionEnd,
+        yearSliderSelectionStart: state.yearSlider.selectionStart,
+        yearSliderSelectionEnd: state.yearSlider.selectionEnd,
         yearFocus: state.timeline.yearFocus,
     }
 }
