@@ -33,7 +33,7 @@ const styles = theme => ({
   root: {
     boxShadow: 'none',
     margin: '0px', 
-    backgroundColor: 'rgba(255,255,255,0.35)',
+    backgroundColor: 'rgba(255,255,255,0.7)',
     position: 'absolute',
     width: '960px',
     bottom: 0,
@@ -213,11 +213,14 @@ class Timeline extends Component {
         var eachBand = x.step();
         var selectStart = event.selection[0];
         var indexStart = Math.floor((selectStart - paddingOuter) / eachBand);
+        //var valueStart = domain[Math.max(0,Math.min(indexStart, domain.length-1))];
         var valueStart = domain[Math.max(0,Math.min(indexStart, domain.length-1))];
         var selectEnd = event.selection[1];
         var indexEnd = Math.floor((selectEnd - paddingOuter) / eachBand);
         var valueEnd = domain[Math.max(0,Math.min(indexEnd, domain.length-1))];
+        //var valueEnd = domain[Math.max(0,Math.min(indexEnd, domain.length))];
         select(this).call(event.target.move, [x(valueStart),x(valueEnd)+eachBand-1]);
+        //select(this).call(event.target.move, [x(valueStart),x(valueEnd)+eachBand]);
     }
 
     componentDidUpdate(prevProps) {

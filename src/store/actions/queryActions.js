@@ -70,8 +70,10 @@ export function doDOISearch(grid_id) {
         const eb = eventBus;
 
         let yearMinimum = getState().timeline.selectionStart;
-        if (!yearMinimum) yearMinimum = 1900;
+        console.log(yearMinimum);
+        if (!yearMinimum) yearMinimum = 0;
         let yearMaximum = getState().timeline.selectionEnd;
+        console.log(yearMaximum);
         if (!yearMaximum) yearMaximum = 2020;
         let payload = { 
             "query" : query,

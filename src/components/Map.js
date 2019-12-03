@@ -205,14 +205,14 @@ class Map extends Component {
         const { pickedGridId, 
 		selectedGridId, 
 		institutionYearSearchResult, 
-		yearSliderSelectionStart, 
-		yearSliderSelectionEnd, 
+		timelineSelectionStart, 
+		timelineSelectionEnd, 
 		yearFocus } = this.props;
         if (prevProps.institutionYearSearchResult !== institutionYearSearchResult) {
             this.updateInstitutionPointSource();
 	}
-        if ((prevProps.yearSliderSelectionStart !== yearSliderSelectionStart) ||
-            (prevProps.yearSliderSelectionEnd !== yearSliderSelectionEnd)) {
+        if ((prevProps.timelineSelectionStart !== timelineSelectionStart) ||
+            (prevProps.timelineSelectionEnd !== timelineSelectionEnd)) {
             this.updateInstitutionPointSource();
         }
     }
@@ -222,17 +222,17 @@ class Map extends Component {
     }
 
     updateInstitutionPointSource() {
-        const { institutionYearSearchResult, yearSliderSelectionStart, yearSliderSelectionEnd } = this.props;
+        const { institutionYearSearchResult, timelineSelectionStart, timelineSelectionEnd } = this.props;
 
 	if ((institutionYearSearchResult == null) || (institutionYearSearchResult["features"] == null)) {
             this.map.getSource("institutionPointSource").setData({ "type": "FeatureCollection", "features": [] });
             return;
 	}
 
-        let _start = yearSliderSelectionStart;
-        let _end = yearSliderSelectionEnd;
-        if (yearSliderSelectionStart == null || yearSliderSelectionEnd == null) {
-            _start = 1900;
+        let _start = timelineSelectionStart;
+        let _end = timelineSelectionEnd;
+        if (timelineSelectionStart === null || timelineSelectionEnd === null) {
+            _start = 0;
             _end = 2020;
         }
         let featureCollection = { "type": "FeatureCollection" };
@@ -260,6 +260,14 @@ class Map extends Component {
             for (var i = 0; i < features.length; i++) {
                 features[i]["properties"]["weight"] = features[i]["properties"]["weight"] / maxScore;
             }
+            features.sort( (x, y) => {
+                if (x["properties"]["weight"] < y["properties"]["weight"]) {
+                    return 1;
+                } else if (y["properties"]["weight"] > x["properties"]["weight"]) {
+                    return -1;
+                }
+                return 0;
+	    });
             featureCollection["features"] = features;
             this.map.getSource("institutionPointSource").setData(featureCollection);
 	}
@@ -288,6 +296,8 @@ const mapStateToProps = state => {
         selectedGridId: state.map.selectedGridId,
         yearSliderSelectionStart: state.yearSlider.selectionStart,
         yearSliderSelectionEnd: state.yearSlider.selectionEnd,
+        timelineSelectionStart: state.timeline.selectionStart,
+        timelineSelectionEnd:  state.timeline.selectionEnd,
         yearFocus: state.timeline.yearFocus,
     }
 }

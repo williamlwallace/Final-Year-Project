@@ -56,7 +56,6 @@ class Home extends Component {
                             <Typography variant="h6" gutterBottom color="inherit" className={classes.flex}>
 	                        COKI Exploration
                             </Typography>
-                            <YearSlider />
 	                    <SearchField />
                         </Toolbar>
                     </AppBar>

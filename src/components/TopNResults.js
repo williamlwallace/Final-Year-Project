@@ -73,12 +73,12 @@ class TopNResults extends Component {
     componentDidUpdate(prevProps) {
        const { doDOISearch, 
 	       selectedGridId, 
-	       yearSliderSelectionStart, 
-	       yearSliderSelectionEnd, 
+	       timelineSelectionStart, 
+	       timelineSelectionEnd, 
 	       institutionYearSearchResult } = this.props;
        if ((prevProps.institutionYearSearchResult !== institutionYearSearchResult) || 
-           (prevProps.yearSliderSelectionStart !== yearSliderSelectionStart) ||
-           (prevProps.yearSliderSelectionEnd !== yearSliderSelectionEnd) ||
+           (prevProps.timelineSelectionStart !== timelineSelectionStart) ||
+           (prevProps.timelineSelectionEnd !== timelineSelectionEnd) ||
            (prevProps.selectedGridId !== selectedGridId)) {
            doDOISearch(selectedGridId);
        }
@@ -223,6 +223,8 @@ const mapStateToProps = state => {
         selectedGridId: state.map.selectedGridId,
         yearSliderSelectionStart: state.yearSlider.selectionStart,
         yearSliderSelectionEnd: state.yearSlider.selectionEnd,
+        timelineSelectionStart: state.timeline.selectionStart,
+        timelineSelectionEnd: state.timeline.selectionEnd,
     }
 }
 

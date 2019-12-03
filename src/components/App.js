@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './App.css';
 import Home from './Home';
-import Foo from './Foo';
-import Bar from './Bar';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 
@@ -14,8 +12,6 @@ class App extends Component {
         return (
             <Router history={history}>
                 <Route exact path="/" component={Home} />
-                <Route path="/foo" component={Foo} />
-                <Route path="/bar" component={Bar} />    
             </Router>
 	);
     }
