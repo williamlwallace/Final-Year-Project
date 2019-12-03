@@ -54,7 +54,7 @@ class Home extends Component {
                     <AppBar className={classes.appBar}>
                         <Toolbar>
                             <Typography variant="h6" gutterBottom color="inherit" className={classes.flex}>
-	                        COKI Exploration
+	                        COKI Explorer
                             </Typography>
 	                    <SearchField />
                         </Toolbar>

@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import theme from "./themes/cokiTheme";
 import App from './components/App';
+import { eventBus } from './config';
 
 const store = configureStore();
 

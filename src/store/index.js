@@ -41,9 +41,9 @@ export default function configureStore() {
 
     store = createStore(reducer, initState, enhancer)
 
-    try {
-        persistStore(store)
-    } catch (e) { }
+    //try {
+    //    persistStore(store)
+    //} catch (e) { }
 
     return store;
 }

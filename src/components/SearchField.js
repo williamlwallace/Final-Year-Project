@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from "react-router";
+import queryString from 'query-string';
 import { setSearchFieldValue } from '../store/actions/searchFieldActions';
 import { doInstitutionYearKeywordSearch } from '../store/actions/queryActions';
 import { withStyles } from '@material-ui/core/styles';
@@ -32,27 +34,29 @@ const styles = {
 
 class SearchField extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            query: '',
-        };
+    componentDidMount() {
+        const { location, setSearchFieldValue, doInstitutionYearKeywordSearch } = this.props;
+        const searchVal = queryString.parse(location.search);
+        let query = searchVal.q;
+        if (!query) query = "";
+        setSearchFieldValue(query);
+        // on event bus open it will perform the query
+        // doInstitutionYearKeywordSearch();
     }
 
-    componentDidMount() { }
-
-    handleChange = name => event => {
-        this.props.setSearchFieldValue(event.target.value);
-    };
-
-    //componentDidMount() {
-        //doInstitutionYearKeywordSearch();
-    //}
+    doKeywordSearch = () => {
+        console.log("doing query");
+        const { history, doInstitutionYearKeywordSearch, value } = this.props;
+        history.push({
+            search: "?" + new URLSearchParams({q: value}).toString(),
+	});
+        doInstitutionYearKeywordSearch();
+    }
 
     handleTextFieldKeyDown = event => {
         switch (event.key) {
             case 'Enter':
-                this.props.doInstitutionYearKeywordSearch();
+                this.doKeywordSearch();
                 event.preventDefault();
                 break
             case 'Escape':
@@ -62,8 +66,16 @@ class SearchField extends Component {
         };
     };
 
+    //handleChange = name => event => {
+    //    this.props.setSearchFieldValue(event.target.value);
+    //};
+    handleChange = event => {
+        const { setSearchFieldValue } = this.props;
+        setSearchFieldValue(event.target.value);
+    };
+
     render() {
-        const { classes } = this.props;
+        const { classes, value } = this.props;
         
         return (
             <Paper className={classes.root} elevation={1}>
@@ -72,11 +84,11 @@ class SearchField extends Component {
                 </IconButton>
                 <InputBase className={classes.input} 
                            inputProps={ { onKeyDown: this.handleTextFieldKeyDown } }
-                           value = { this.props.query }
-                           onChange = { this.handleChange('query') }
+                           value = { value }
+                           onChange = { this.handleChange }
                            placeholder="Search" />
                 <IconButton className={classes.iconButton} 
-                            onClick={this.props.doInstitutionYearKeywordSearch} 
+                            onClick={this.doKeywordSearch} 
                             color="primary" 
                             aria-label="Search">
                     <SearchIcon />
@@ -88,6 +100,7 @@ class SearchField extends Component {
 
 const mapStateToProps = state => {
     return {
+        value: state.searchField.value,
     }
 }
 
@@ -98,6 +111,9 @@ const mapDispatchToProps = (dispatch) => {
     });
 }
 
-export default connect(
+export default withRouter(connect(
     mapStateToProps, mapDispatchToProps
-)(withStyles(styles)(SearchField));
+)(withStyles(styles)(SearchField)));
+//export default connect(
+//    mapStateToProps, mapDispatchToProps
+//)(withStyles(styles)(SearchField));

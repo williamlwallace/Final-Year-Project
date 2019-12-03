@@ -1,5 +1,6 @@
 import firebase from 'firebase'
 import EventBus from 'vertx3-eventbus-client';
+import { doInstitutionYearKeywordSearch } from './store/actions/queryActions';
 
 const config = {
     firebase_config_dev: {
@@ -41,8 +42,11 @@ export const firebaseAuth = firebase.auth;
 
 // connect to the verticle middleware web socket event bus
 const eventBus = new EventBus('http://localhost:8080/eventbus');
+eventBus.onopen = function() {
+    doInstitutionYearKeywordSearch();
+};
 eventBus.enableReconnect(true);
-console.log(eventBus);
+//console.log(eventBus);
 export { eventBus };
 
 export default config
