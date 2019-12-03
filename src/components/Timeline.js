@@ -79,7 +79,7 @@ class Timeline extends Component {
     }
 
     updateBarChart(data) {
-        const { setTimelineSelectionStart, setTimelineSelectionEnd } = this.props;
+        const { setTimelineSelectionStart, setTimelineSelectionEnd, setTimelineYearFocus } = this.props;
         this.svg.selectAll("g").remove();
         if (data) {
             this.barchart = this.svg.append("g");

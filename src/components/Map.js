@@ -88,6 +88,8 @@ class Map extends Component {
         this.map.on('load', () => {
             // initialize the institutionPoints data source
             this.map.addSource('institutionPointSource', JSON.parse(JSON.stringify(this.emptyGeoJsonSource)));
+            // initialize the timelineBarFocusMarkers data source
+            this.map.addSource('yearFocusMarkerPointSource', JSON.parse(JSON.stringify(this.emptyGeoJsonSource)));
 
             var heatmapColor = scaleSequential(interpolateWarm).domain([0, 1]);
             this.map.addLayer({
@@ -241,6 +243,18 @@ class Map extends Component {
                     this.props.setOrToggleSelectedGridId(null);
                 }
             });
+            // add pulsing dots for timeline focus
+
+            this.map.addImage('pulsing-dot', pulsingDot, { pixelRatio: 2 });
+            this.map.addLayer({
+                "id": "yearFocusDots",
+                "type": "symbol",
+                "source": "yearFocusMarkerPointSource",
+                "layout": {
+                    "icon-image": "pulsing-dot",
+                    "icon-allow-overlap": true
+                }
+            });
 	});
 
         // Force immediate re-render now that the map is created
@@ -253,13 +267,18 @@ class Map extends Component {
 		institutionYearSearchResult, 
 		timelineSelectionStart, 
 		timelineSelectionEnd, 
-		yearFocus } = this.props;
+		timelineYearFocus } = this.props;
         if (prevProps.institutionYearSearchResult !== institutionYearSearchResult) {
             this.updateInstitutionPointSource();
 	}
         if ((prevProps.timelineSelectionStart !== timelineSelectionStart) ||
             (prevProps.timelineSelectionEnd !== timelineSelectionEnd)) {
             this.updateInstitutionPointSource();
+        }
+
+        // check if the timeline bar focus has changed
+        if (prevProps.timelineYearFocus !== timelineYearFocus) {
+            this.updateYearFocusMarkers();
         }
     }
 
@@ -319,6 +338,24 @@ class Map extends Component {
 	}
     }
 
+    updateYearFocusMarkers() {
+        const { institutionYearSearchResult, timelineYearFocus } = this.props;
+        let pcGeoJson = { "type": "FeatureCollection", "features": [] };
+        if (timelineYearFocus !== null) {
+            let pcFiltered = institutionYearSearchResult["features"].filter( (p) => {
+                for (const year in p["properties"]["scoresByYear"]) {
+                    if (+year === +timelineYearFocus) {
+                       return true;
+                    }
+		}
+                return false;
+	    });
+            pcGeoJson = { "type": "FeatureCollection" };
+            pcGeoJson["features"] = pcFiltered;
+	}
+        this.map.getSource('yearFocusMarkerPointSource').setData(pcGeoJson);
+    }
+
     render() {
         const style = {
             position: 'absolute',
@@ -344,7 +381,7 @@ const mapStateToProps = state => {
         yearSliderSelectionEnd: state.yearSlider.selectionEnd,
         timelineSelectionStart: state.timeline.selectionStart,
         timelineSelectionEnd:  state.timeline.selectionEnd,
-        yearFocus: state.timeline.yearFocus,
+        timelineYearFocus: state.timeline.yearFocus,
     }
 }
 
