@@ -4,6 +4,7 @@ import { withRouter } from "react-router";
 import mapboxgl from 'mapbox-gl';
 import queryString from 'query-string';
 import { doInstitutionYearKeywordSearch } from '../store/actions/queryActions';
+import { setSearchFieldValue } from '../store/actions/searchFieldActions';
 import { 
            interpolateWarm,
            scaleSequential,
@@ -35,10 +36,11 @@ class Map extends Component {
     ];
 
     async componentDidMount() {
-        const { location, eventBus, doInstitutionYearKeywordSearch } = this.props;
+        const { location, eventBus, doInstitutionYearKeywordSearch, setSearchFieldValue } = this.props;
         const searchVal = queryString.parse(location.search);
         let query = searchVal.q;
-        if (!query) query = "";
+        console.log(searchVal);
+	if (!query) query = "";
 
         this.map = new mapboxgl.Map({
             container: this.mapContainer,
@@ -50,25 +52,27 @@ class Map extends Component {
 
         // if the event bus has been connected then do a query based on url parameters
         if (query) {
-            await this.pollEventBusConnected();
+            await this.pollEventBusConnected(5000);
+            setSearchFieldValue(query);
             doInstitutionYearKeywordSearch();
-        } else {
-            // Force immediate re-render now that the map is created
-            this.setState({mapLoaded : true});
-        }
+        } 
+        // Force immediate re-render now that the map is created
+        this.setState({mapLoaded : true});
     }
 
-    pollEventBusConnected() {
-        const { eventBus } = this.props;
-        return new Promise((resolve, reject) => {
-            (function waitForEventBus() {
-                if (eventBus) { 
-                    //doInstitutionYearKeywordSearch();
-                    return resolve();
-                }
-                setTimeout(waitForEventBus, 30);
-	    })();
-	});
+    pollEventBusConnected(timeout) {
+        var start = Date.now();
+        var waitForEventBus = (resolve, reject) => {
+            const { eventBus } = this.props;
+            if (eventBus) {
+                resolve(eventBus);
+	    } else if (timeout && (Date.now() - start) >= timeout) {
+                reject(new Error("Socket timeout"));
+            } else {
+                setTimeout(waitForEventBus.bind(this, resolve), 30);
+           }
+        }
+        return new Promise(waitForEventBus);
     }
 
     componentDidUpdate(prevProps) {
@@ -506,6 +510,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
     return ({
         setOrToggleSelectedGridId: (gridId) => { dispatch(setOrToggleMapSelectedGridId(gridId)) },
+        setSearchFieldValue: (value) => { dispatch(setSearchFieldValue(value)) },
         doInstitutionYearKeywordSearch: () => { dispatch(doInstitutionYearKeywordSearch()) },
     });
 }
