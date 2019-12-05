@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from "react-router";
 import mapboxgl from 'mapbox-gl';
+import queryString from 'query-string';
 import { doInstitutionYearKeywordSearch } from '../store/actions/queryActions';
 import { 
            interpolateWarm,
@@ -33,22 +35,27 @@ class Map extends Component {
     ];
 
     async componentDidMount() {
-        const { eventBus, doInstitutionYearKeywordSearch } = this.props;
+        const { location, eventBus, doInstitutionYearKeywordSearch } = this.props;
+        const searchVal = queryString.parse(location.search);
+        let query = searchVal.q;
+        if (!query) query = "";
+
         this.map = new mapboxgl.Map({
             container: this.mapContainer,
             //style: 'mapbox://styles/mapbox/outdoors-v9'
             style: 'mapbox://styles/mapbox/dark-v10'
         });
-
+        
         await this.loadMap();
 
         // if the event bus has been connected then do a query based on url parameters
-        // if not connected, then it will do the query on componentDidUpdate
-        await this.pollEventBusConnected();
-        doInstitutionYearKeywordSearch();
-
-        // Force immediate re-render now that the map is created
-        this.setState({mapLoaded : true});
+        if (query) {
+            await this.pollEventBusConnected();
+            doInstitutionYearKeywordSearch();
+        } else {
+            // Force immediate re-render now that the map is created
+            this.setState({mapLoaded : true});
+        }
     }
 
     pollEventBusConnected() {
@@ -120,15 +127,7 @@ class Map extends Component {
 
             render: function() {
                 const radius = dotSize / 2;
-                //const outerRadius = dotSize / 2 * 0.7 * t + radius;
                 const context = this.context;
-
-                // draw outer circle
-                //context.clearRect(0, 0, this.width, this.height);
-                //context.beginPath();
-                //context.arc(this.width / 2, this.height / 2, outerRadius, 0, Math.PI * 2);
-                //context.fillStyle = 'rgba(200, 255, 200,' + (1 - t) + ')';
-                //context.fill();
 
                 // draw inner circle
                 context.beginPath();
@@ -143,8 +142,6 @@ class Map extends Component {
                 // update this image's data with data from the canvas
                 this.data = context.getImageData(0, 0, this.width, this.height).data;
 
-                // keep the map repainting
-                //theMap.triggerRepaint();
                 // return `true` to let the map know that the image was updated
                 return true;
             }
@@ -513,6 +510,6 @@ const mapDispatchToProps = (dispatch) => {
     });
 }
 
-export default connect(
+export default withRouter(connect(
     mapStateToProps, mapDispatchToProps
-)(Map);
+)(Map));

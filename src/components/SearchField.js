@@ -40,7 +40,7 @@ class SearchField extends Component {
         let query = searchVal.q;
         if (!query) query = "";
         setSearchFieldValue(query);
-        console.log("search field component loaded");
+        //console.log("search field component loaded");
         // on event bus open it will perform the query
         // doInstitutionYearKeywordSearch();
     }
