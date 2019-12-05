@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import mapboxgl from 'mapbox-gl';
+import { doInstitutionYearKeywordSearch } from '../store/actions/queryActions';
 import { 
            interpolateWarm,
            scaleSequential,
@@ -31,15 +32,81 @@ class Map extends Component {
         [ -180, -85.05115 ]
     ];
 
-    componentDidMount() {
+    async componentDidMount() {
+        const { eventBus, doInstitutionYearKeywordSearch } = this.props;
         this.map = new mapboxgl.Map({
             container: this.mapContainer,
             //style: 'mapbox://styles/mapbox/outdoors-v9'
             style: 'mapbox://styles/mapbox/dark-v10'
         });
-        var theMap = this.map;
-        const dotSize = 48;
-        const pulsingDot = {
+
+        await this.loadMap();
+
+        // if the event bus has been connected then do a query based on url parameters
+        // if not connected, then it will do the query on componentDidUpdate
+        await this.pollEventBusConnected();
+        doInstitutionYearKeywordSearch();
+
+        // Force immediate re-render now that the map is created
+        this.setState({mapLoaded : true});
+    }
+
+    pollEventBusConnected() {
+        const { eventBus } = this.props;
+        return new Promise((resolve, reject) => {
+            (function waitForEventBus() {
+                if (eventBus) { 
+                    //doInstitutionYearKeywordSearch();
+                    return resolve();
+                }
+                setTimeout(waitForEventBus, 30);
+	    })();
+	});
+    }
+
+    componentDidUpdate(prevProps) {
+        const { pickedGridId, 
+		selectedGridId, 
+		institutionYearSearchResult, 
+		timelineSelectionStart, 
+		timelineSelectionEnd, 
+		timelineYearFocus,
+	        eventBus,
+	        doInstitutionYearKeywordSearch
+	} = this.props;
+        if (prevProps.institutionYearSearchResult !== institutionYearSearchResult) {
+            this.updateInstitutionPointSource();
+	}
+        if ((prevProps.timelineSelectionStart !== timelineSelectionStart) ||
+            (prevProps.timelineSelectionEnd !== timelineSelectionEnd)) {
+            this.updateInstitutionPointSource();
+        }
+
+        // check if the timeline bar focus has changed
+        if (prevProps.timelineYearFocus !== timelineYearFocus) {
+            this.updateYearFocusMarkers();
+        }
+
+        if (prevProps.selectedGridId !== selectedGridId) {
+            this.updateSelectedGridMarker();
+	}
+        // reload if the eventBus is reset
+        //if (prevProps.eventBus !== eventBus) {
+            //doInstitutionYearKeywordSearch();
+	//};
+    }
+
+    componentWillUnmount() {
+        this.map.remove();
+    }
+
+    async loadMap() {
+        return new Promise((resolve, reject) => {
+          var theMap = this.map;
+          const pulsingDotSize = 96;
+          const dotSize = 16;
+
+          const dot = {
             width: dotSize,
             height: dotSize,
             data: new Uint8Array(dotSize * dotSize * 4),
@@ -52,11 +119,55 @@ class Map extends Component {
             },
 
             render: function() {
-                const duration = 3000;
+                const radius = dotSize / 2;
+                //const outerRadius = dotSize / 2 * 0.7 * t + radius;
+                const context = this.context;
+
+                // draw outer circle
+                //context.clearRect(0, 0, this.width, this.height);
+                //context.beginPath();
+                //context.arc(this.width / 2, this.height / 2, outerRadius, 0, Math.PI * 2);
+                //context.fillStyle = 'rgba(200, 255, 200,' + (1 - t) + ')';
+                //context.fill();
+
+                // draw inner circle
+                context.beginPath();
+                context.arc(this.width / 2, this.height / 2, radius-1, 0, Math.PI * 2);
+                context.fillStyle = 'rgba(50, 128, 50, 1)';
+                context.strokeStyle = 'white';
+                //context.lineWidth = 1 + 2 * (1 - t);
+                context.lineWidth = 2;
+                context.fill();
+                context.stroke();
+
+                // update this image's data with data from the canvas
+                this.data = context.getImageData(0, 0, this.width, this.height).data;
+
+                // keep the map repainting
+                //theMap.triggerRepaint();
+                // return `true` to let the map know that the image was updated
+                return true;
+            }
+	  };
+
+          const pulsingDot = {
+            width: pulsingDotSize,
+            height: pulsingDotSize,
+            data: new Uint8Array(pulsingDotSize * pulsingDotSize * 4),
+
+            onAdd: function() {
+                var canvas = document.createElement('canvas');
+                canvas.width = this.width;
+                canvas.height = this.height;
+                this.context = canvas.getContext('2d');
+            },
+
+            render: function() {
+                const duration = 1000;
                 const t = (performance.now() % duration) / duration;
 
-                const radius = dotSize / 2 * 0.3;
-                const outerRadius = dotSize / 2 * 0.5 * t + radius;
+                const radius = pulsingDotSize / 2 * 0.3;
+                const outerRadius = pulsingDotSize / 2 * 0.7 * t + radius;
                 const context = this.context;
 
                 // draw outer circle
@@ -71,7 +182,7 @@ class Map extends Component {
                 context.arc(this.width / 2, this.height / 2, radius, 0, Math.PI * 2);
                 context.fillStyle = 'rgba(50, 128, 50, 1)';
                 context.strokeStyle = 'white';
-                context.lineWidth = 1 + 2 * (1 - t);
+                context.lineWidth = 2 + 4 * (1 - t);
                 context.fill();
                 context.stroke();
 
@@ -83,13 +194,15 @@ class Map extends Component {
                 // return `true` to let the map know that the image was updated
                 return true;
             }
-        };
+          };
 
-        this.map.on('load', () => {
+          this.map.on('load', () => {
             // initialize the institutionPoints data source
             this.map.addSource('institutionPointSource', JSON.parse(JSON.stringify(this.emptyGeoJsonSource)));
-            // initialize the timelineBarFocusMarkers data source
+            // initialize the timeline yearFocusMarkers data source
             this.map.addSource('yearFocusMarkerPointSource', JSON.parse(JSON.stringify(this.emptyGeoJsonSource)));
+            // initialize the selectedGrid data source
+            this.map.addSource('selectedGridPointSource', JSON.parse(JSON.stringify(this.emptyGeoJsonSource)));
 
             var heatmapColor = scaleSequential(interpolateWarm).domain([0, 1]);
             this.map.addLayer({
@@ -220,7 +333,6 @@ class Map extends Component {
             // Toggle the selected cell
             this.map.on("click", "grid-circles", (e) => {
                 if (e.features.length > 0) {
-                    console.log(e.features[0]);
                     this.props.setOrToggleSelectedGridId(e.features[0].properties.id);
                 } else {
                     this.props.setOrToggleSelectedGridId(null);
@@ -243,54 +355,43 @@ class Map extends Component {
                     this.props.setOrToggleSelectedGridId(null);
                 }
             });
-            // add pulsing dots for timeline focus
 
-            this.map.addImage('pulsing-dot', pulsingDot, { pixelRatio: 2 });
+            // add dots for grids with publications on focused year on timeline
+            this.map.addImage('dot', dot, { pixelRatio: 2 });
             this.map.addLayer({
                 "id": "yearFocusDots",
                 "type": "symbol",
                 "source": "yearFocusMarkerPointSource",
                 "layout": {
-                    "icon-image": "pulsing-dot",
+                    "icon-image": "dot",
                     "icon-allow-overlap": true
                 }
             });
-	});
 
-        // Force immediate re-render now that the map is created
-        this.setState({mapLoaded : true});
-    }
+            // add pulsing dot for selected grid
+            this.map.addImage('pulsing-dot', pulsingDot, { pixelRatio: 2 });
+            this.map.addLayer({
+                "id": "selectedGridDot",
+                "type": "symbol",
+                "source": "selectedGridPointSource",
+                "layout": {
+                    "icon-image": "pulsing-dot"
+                }
+            });
 
-    componentDidUpdate(prevProps) {
-        const { pickedGridId, 
-		selectedGridId, 
-		institutionYearSearchResult, 
-		timelineSelectionStart, 
-		timelineSelectionEnd, 
-		timelineYearFocus } = this.props;
-        if (prevProps.institutionYearSearchResult !== institutionYearSearchResult) {
-            this.updateInstitutionPointSource();
-	}
-        if ((prevProps.timelineSelectionStart !== timelineSelectionStart) ||
-            (prevProps.timelineSelectionEnd !== timelineSelectionEnd)) {
-            this.updateInstitutionPointSource();
-        }
+            resolve(true);
+	  });
 
-        // check if the timeline bar focus has changed
-        if (prevProps.timelineYearFocus !== timelineYearFocus) {
-            this.updateYearFocusMarkers();
-        }
-    }
-
-    componentWillUnmount() {
-        this.map.remove();
+        });
     }
 
     updateInstitutionPointSource() {
         const { institutionYearSearchResult, timelineSelectionStart, timelineSelectionEnd } = this.props;
-
 	if ((institutionYearSearchResult == null) || (institutionYearSearchResult["features"] == null)) {
-            this.map.getSource("institutionPointSource").setData({ "type": "FeatureCollection", "features": [] });
+            try {
+                this.map.getSource("institutionPointSource").setData({ "type": "FeatureCollection", "features": [] });
+            } catch (e) { }
+            console.log("update");
             return;
 	}
 
@@ -338,6 +439,24 @@ class Map extends Component {
 	}
     }
 
+    updateSelectedGridMarker() {
+        const { selectedGridId, institutionYearSearchResult } = this.props;
+        console.log("update selected grid marker");
+	console.log(selectedGridId);
+        let gridGeoJson = { "type": "FeatureCollection", "features": [] };
+        if (selectedGridId !== null) {
+            let grid = institutionYearSearchResult["features"].find( (p) => {
+                return p["properties"]["gridId"] == selectedGridId;
+            });
+	    console.log(grid);
+            if (grid !== null) {
+                gridGeoJson = { "type": "FeatureCollection", "features": [grid] };
+            }
+        }
+	console.log(gridGeoJson);
+        this.map.getSource("selectedGridPointSource").setData(gridGeoJson);
+    }
+
     updateYearFocusMarkers() {
         const { institutionYearSearchResult, timelineYearFocus } = this.props;
         let pcGeoJson = { "type": "FeatureCollection", "features": [] };
@@ -354,6 +473,7 @@ class Map extends Component {
             pcGeoJson["features"] = pcFiltered;
 	}
         this.map.getSource('yearFocusMarkerPointSource').setData(pcGeoJson);
+        this.map.triggerRepaint();
     }
 
     render() {
@@ -382,12 +502,14 @@ const mapStateToProps = state => {
         timelineSelectionStart: state.timeline.selectionStart,
         timelineSelectionEnd:  state.timeline.selectionEnd,
         timelineYearFocus: state.timeline.yearFocus,
+        eventBus: state.eventBus.eventBus,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return ({
         setOrToggleSelectedGridId: (gridId) => { dispatch(setOrToggleMapSelectedGridId(gridId)) },
+        doInstitutionYearKeywordSearch: () => { dispatch(doInstitutionYearKeywordSearch()) },
     });
 }
 

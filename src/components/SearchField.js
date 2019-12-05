@@ -40,12 +40,13 @@ class SearchField extends Component {
         let query = searchVal.q;
         if (!query) query = "";
         setSearchFieldValue(query);
+        console.log("search field component loaded");
         // on event bus open it will perform the query
         // doInstitutionYearKeywordSearch();
     }
 
     doKeywordSearch = () => {
-        console.log("doing query");
+        //console.log("doing query");
         const { history, doInstitutionYearKeywordSearch, value } = this.props;
         history.push({
             search: "?" + new URLSearchParams({q: value}).toString(),

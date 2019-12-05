@@ -1,3 +1,6 @@
+// Event bus actions
+export const SET_EVENTBUS = `EVENTBUS@SET`;
+
 // User actions
 export const USER_LOGOUT = `AUTH@USER_LOGOUT`;
 export const USER_LOGIN = `AUTH@USER_LOGIN`;

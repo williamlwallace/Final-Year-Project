@@ -19,7 +19,8 @@ export function setDOISearchResult(doiSearchResult) {
 export function doInstitutionYearKeywordSearch() {
     return function (dispatch, getState) {
         let query = getState().searchField.value;
-        if (!query) {
+        let eb = getState().eventBus.eventBus;
+        if (!(query && eb)) {
             // You don't have to return Promises, but it's a handy convention
             // so the caller can always call .then() on async dispatch result.
             console.log("clear the query");
@@ -30,7 +31,6 @@ export function doInstitutionYearKeywordSearch() {
             return Promise.resolve();
 	}
 
-        const eb = eventBus;
         let payload = { 
             "query" : query,
             //"size" : 10000
@@ -52,10 +52,11 @@ export function doInstitutionYearKeywordSearch() {
 export function doDOISearch(grid_id) {
     return function (dispatch, getState) {
         let query = getState().searchField.value;
-        if (!(query && grid_id)) {
+        let eb = getState().eventBus.eventBus;
+        if (!(query && grid_id && eb)) {
             // You don't have to return Promises, but it's a handy convention
             // so the caller can always call .then() on async dispatch result.
-            console.log("clear the query");
+            //console.log("clear the query");
 
             dispatch(setDOISearchResult({
                 "max_score" : 0,
@@ -67,13 +68,9 @@ export function doDOISearch(grid_id) {
             return Promise.resolve();
 	}
 
-        const eb = eventBus;
-
         let yearMinimum = getState().timeline.selectionStart;
-        console.log(yearMinimum);
         if (!yearMinimum) yearMinimum = 0;
         let yearMaximum = getState().timeline.selectionEnd;
-        console.log(yearMaximum);
         if (!yearMaximum) yearMaximum = 2020;
         let payload = { 
             "query" : query,

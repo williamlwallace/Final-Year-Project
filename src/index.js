@@ -7,9 +7,20 @@ import { Provider } from 'react-redux';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import theme from "./themes/cokiTheme";
 import App from './components/App';
-import { eventBus } from './config';
+import EventBus from 'vertx3-eventbus-client';
+import { setEventBus } from './store/actions/eventBusActions';
+//import { eventBus } from './config';
 
 const store = configureStore();
+// connect to the verticle middleware web socket event bus
+var eventBus = new EventBus('http://localhost:8080/eventbus');
+eventBus.enableReconnect(true);
+eventBus.onerror = (e) => {
+    console.log(e);
+};
+eventBus.onopen = () => {
+    store.dispatch(setEventBus(eventBus));
+};
 
 ReactDOM.render(
     <Provider store={store}>

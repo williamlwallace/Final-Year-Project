@@ -35,6 +35,7 @@ const styles = theme => ({
 });
 
 class Home extends Component {
+
     render() {
         const containerStyle = {
             width: '100%',

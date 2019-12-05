@@ -81,7 +81,7 @@ class Timeline extends Component {
     updateBarChart(data) {
         const { setTimelineSelectionStart, setTimelineSelectionEnd, setTimelineYearFocus } = this.props;
         this.svg.selectAll("g").remove();
-        if (data) {
+        if (data && data.tbars) {
             this.barchart = this.svg.append("g");
             let tmin = 1960;
             let tmax = 2020;
@@ -91,7 +91,7 @@ class Timeline extends Component {
             this.brushYears.append("text")
                            .attr("id", "brushYears")
                            .classed("yearText", true)
-                           .text(brushYearStart + " - " + brushYearEnd)
+                           .text("All years")
                            .attr("x", 35)
                            .attr("y", 12);
             let barData = [];
@@ -129,7 +129,7 @@ class Timeline extends Component {
                                  .on("end", () => {
                 if (!event.sourceEvent) return;
                 if (event.selection === null) {
-                    select("#brushYears").text(brushYearStart + " - " + brushYearEnd);
+                    select("#brushYears").text("All years");
                     setTimelineSelectionStart(null);
                     setTimelineSelectionEnd(null);
                     return;

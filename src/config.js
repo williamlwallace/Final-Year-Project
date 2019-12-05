@@ -41,12 +41,14 @@ export const firebaseAuth = firebase.auth;
 **/
 
 // connect to the verticle middleware web socket event bus
-const eventBus = new EventBus('http://localhost:8080/eventbus');
-eventBus.onopen = function() {
-    doInstitutionYearKeywordSearch();
-};
-eventBus.enableReconnect(true);
-//console.log(eventBus);
-export { eventBus };
+//var eventBus = new EventBus('http://localhost:8080/eventbus');
+//eventBus.enableReconnect(true);
+//eventBus.onerror = (e) => {
+//    console.log(e);
+//};
+//eventBus.onopen = () => {
+//    return eventBus;
+//};
+//export { eventBus };
 
 export default config

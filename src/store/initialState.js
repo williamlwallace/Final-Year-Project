@@ -29,5 +29,8 @@ export default {
     yearSlider: {
         selectionStart: null,
         selectionEnd: null,
-    }
+    },
+    eventBus: {
+        eventBus: null,
+    },
 }

@@ -6,6 +6,7 @@ import queryResults from './queryResultsReducer';
 import timeline from './timelineReducer';
 import yearSlider from './yearSliderReducer';
 import auth from './authReducer';
+import eventBus from './eventBusReducer';
 import { connectRouter } from 'connected-react-router'
 
 export default (history) => combineReducers({
@@ -18,5 +19,6 @@ export default (history) => combineReducers({
     queryResults,
     timeline,
     yearSlider,
+    eventBus,
 })
 
