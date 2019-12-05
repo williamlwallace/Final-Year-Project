@@ -27,7 +27,7 @@ const config = {
         'password',
         'phone'
     ],
-    initial_state: {'
+    initial_state: {
     },
     drawer_width: 256
 }
