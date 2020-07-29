@@ -33,4 +33,7 @@ export default {
     eventBus: {
         eventBus: null,
     },
+    loginDialog: {
+        isOpen: false,
+    }
 }

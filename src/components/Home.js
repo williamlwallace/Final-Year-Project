@@ -7,6 +7,11 @@ import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Map from './Map';
 import Timeline from './Timeline';
 import TopNResults from './TopNResults';
@@ -37,6 +42,17 @@ const styles = theme => ({
 
 class Home extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {isOpen: false};
+    }
+
+    toggleDialog = () => {
+        this.setState({
+            isOpen: !this.state.isOpen
+        });
+    }
+
     render() {
         const containerStyle = {
             width: '100%',
@@ -59,11 +75,41 @@ class Home extends Component {
 	                        COKI Explorer
                             </Typography>
 	                    <SearchField />
-                        <Button variant="contained" className={classes.button} onClick={() => {handleClickOpen}}>
+                        <Button variant="contained" className={classes.button} onClick={this.toggleDialog}>
                             Login
                         </Button>
                         </Toolbar>
                     </AppBar>
+
+                    <Dialog open={this.state.isOpen} onClose={this.toggleDialog} aria-labelledby="form-dialog-title">
+                        <DialogTitle id="form-dialog-title">Login</DialogTitle>
+                        <DialogContent>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="username"
+                            label="Username"
+                            type="text"
+                            fullWidth
+                        />
+                        <TextField
+                            margin="dense"
+                            id="password"
+                            label="Password"
+                            type="password"
+                            fullWidth
+                        />
+                        </DialogContent>
+                        <DialogActions>
+                        <Button variant="text" onClick={this.toggleDialog} color="primary">
+                            Register
+                        </Button>
+                        <Button variant="contained" onClick={this.toggleDialog} color="primary">
+                            Login
+                        </Button>
+                        </DialogActions>
+                    </Dialog>
+
                 </div>
                 <Map />
                 <Timeline />
