@@ -12,6 +12,7 @@ import Timeline from './Timeline';
 import TopNResults from './TopNResults';
 import SearchField from './SearchField';
 import YearSlider from './YearSlider';
+import LoginDialog from './LoginDialog';
 
 const styles = theme => ({
     flex: {
@@ -58,6 +59,9 @@ class Home extends Component {
 	                        COKI Explorer
                             </Typography>
 	                    <SearchField />
+                        <Button variant="contained" className={classes.button} onClick={() => {handleClickOpen}}>
+                            Login
+                        </Button>
                         </Toolbar>
                     </AppBar>
                 </div>
