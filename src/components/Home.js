@@ -60,6 +60,12 @@ class Home extends Component {
         });
     }
 
+    setRegisterState = () => {
+        this.setState({
+            isRegister: false
+        })
+    }
+
     render() {
         const containerStyle = {
             width: '100%',
@@ -89,8 +95,45 @@ class Home extends Component {
                     </AppBar>
 
                     <Dialog open={this.state.isOpen} onClose={this.toggleDialog} aria-labelledby="form-dialog-title">
-                        {this.state.isRegister ?
-                            <DialogTitle id="form-dialog-title">Login</DialogTitle>
+                    {this.state.isRegister ?
+                        [<DialogTitle id="form-dialog-title">Register</DialogTitle>,
+                                <DialogContent>
+                                <TextField
+                                    autoFocus
+                                    margin="dense"
+                                    label="Username"
+                                    type="text"
+                                    fullWidth
+                                />
+                                <TextField
+                                    margin="dense"
+                                    label="Email"
+                                    type="email"
+                                    fullWidth
+                                />
+                                <TextField
+                                    margin="dense"
+                                    label="Password"
+                                    type="password"
+                                    fullWidth
+                                />
+                                <TextField
+                                    margin="dense"
+                                    label="Confirm Password"
+                                    type="password"
+                                    fullWidth
+                                />
+                                </DialogContent>,
+                                <DialogActions>
+                                    <Button variant="text" onClick={this.toggleRegister} color="primary">
+                                        Back
+                                    </Button>
+                                    <Button variant="contained" onClick={this.toggleDialog} color="primary">
+                                        Create
+                                    </Button>
+                                </DialogActions>]
+                    :
+                        [<DialogTitle id="form-dialog-title">Login</DialogTitle>,
                             <DialogContent>
                             <TextField
                                 autoFocus
@@ -105,53 +148,16 @@ class Home extends Component {
                                 type="password"
                                 fullWidth
                             />
-                            </DialogContent> 
+                            </DialogContent>,
                             <DialogActions>
-                            <Button variant="text" onClick={this.toggleDialog} color="primary">
+                            <Button variant="text" onClick={this.toggleRegister} color="primary">
                                 Register
                             </Button>
                             <Button variant="contained" onClick={this.toggleDialog} color="primary">
                                 Login
                             </Button>
-                            </DialogActions>
-                        :
-                            <DialogTitle id="form-dialog-title">Register</DialogTitle>
-                            <DialogContent>
-                            <TextField
-                                autoFocus
-                                margin="dense"
-                                label="Username"
-                                type="text"
-                                fullWidth
-                            />
-                            <TextField
-                                margin="dense"
-                                label="Email"
-                                type="email"
-                                fullWidth
-                            />
-                            <TextField
-                                margin="dense"
-                                label="Password"
-                                type="password"
-                                fullWidth
-                            />
-                            <TextField
-                                margin="dense"
-                                label="Confirm Password"
-                                type="password"
-                                fullWidth
-                            />
-                            </DialogContent>
-                            }
-                        <DialogActions>
-                        <Button variant="text" onClick={this.toggleDialog} color="primary">
-                            Register
-                        </Button>
-                        <Button variant="contained" onClick={this.toggleDialog} color="primary">
-                            Login
-                        </Button>
-                        </DialogActions>
+                        </DialogActions>]
+                    }
                     </Dialog>
 
                 </div>
