@@ -45,11 +45,18 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {isOpen: false};
+        this.state = {isRegister: false};
     }
 
     toggleDialog = () => {
         this.setState({
             isOpen: !this.state.isOpen
+        });
+    }
+
+    toggleRegister = () => {
+        this.setState({
+            isRegister: !this.state.isRegister
         });
     }
 
@@ -82,24 +89,61 @@ class Home extends Component {
                     </AppBar>
 
                     <Dialog open={this.state.isOpen} onClose={this.toggleDialog} aria-labelledby="form-dialog-title">
-                        <DialogTitle id="form-dialog-title">Login</DialogTitle>
-                        <DialogContent>
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="username"
-                            label="Username"
-                            type="text"
-                            fullWidth
-                        />
-                        <TextField
-                            margin="dense"
-                            id="password"
-                            label="Password"
-                            type="password"
-                            fullWidth
-                        />
-                        </DialogContent>
+                        {this.state.isRegister ?
+                            <DialogTitle id="form-dialog-title">Login</DialogTitle>
+                            <DialogContent>
+                            <TextField
+                                autoFocus
+                                id="username"
+                                label="Username"
+                                type="text"
+                                fullWidth
+                            />
+                            <TextField
+                                id="password"
+                                label="Password"
+                                type="password"
+                                fullWidth
+                            />
+                            </DialogContent> 
+                            <DialogActions>
+                            <Button variant="text" onClick={this.toggleDialog} color="primary">
+                                Register
+                            </Button>
+                            <Button variant="contained" onClick={this.toggleDialog} color="primary">
+                                Login
+                            </Button>
+                            </DialogActions>
+                        :
+                            <DialogTitle id="form-dialog-title">Register</DialogTitle>
+                            <DialogContent>
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                label="Username"
+                                type="text"
+                                fullWidth
+                            />
+                            <TextField
+                                margin="dense"
+                                label="Email"
+                                type="email"
+                                fullWidth
+                            />
+                            <TextField
+                                margin="dense"
+                                label="Password"
+                                type="password"
+                                fullWidth
+                            />
+                            <TextField
+                                margin="dense"
+                                label="Confirm Password"
+                                type="password"
+                                fullWidth
+                            />
+                            </DialogContent>
+                            }
                         <DialogActions>
                         <Button variant="text" onClick={this.toggleDialog} color="primary">
                             Register
