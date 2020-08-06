@@ -5,6 +5,7 @@ import * as serviceWorker from './serviceWorker';
 import configureStore from './store';
 import { Provider } from 'react-redux';
 import { MuiThemeProvider } from '@material-ui/core/styles';
+import { SnackbarProvider } from 'notistack';
 import theme from "./themes/cokiTheme";
 import App from './components/App';
 import EventBus from 'vertx3-eventbus-client';
@@ -25,7 +26,9 @@ eventBus.onopen = () => {
 ReactDOM.render(
     <Provider store={store}>
         <MuiThemeProvider theme={theme}>
-            <App />
+            <SnackbarProvider maxSnack={3}>
+                <App />
+            </SnackbarProvider>
         </MuiThemeProvider>
     </Provider>,
     document.getElementById('root')

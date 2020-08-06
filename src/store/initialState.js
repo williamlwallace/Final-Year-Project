@@ -1,5 +1,15 @@
 export default {
-    auth: { isAuthorized: false },
+    auth: {
+        isLoggingIn: false,
+        isLoggingOut: false,
+        isVerifying: false,
+        isCreatingUser: false,
+        loginError: false,
+        logoutError: false,
+        createUserError: false,
+        isAuthenticated: false,
+        user: {}
+    },
     appLayout: {},  
     searchField: {
         value: '',
@@ -33,7 +43,4 @@ export default {
     eventBus: {
         eventBus: null,
     },
-    loginDialog: {
-        isOpen: false,
-    }
 }

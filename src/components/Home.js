@@ -12,12 +12,17 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
+import Snackbar from '@material-ui/core/Snackbar'
+import { Alert } from '@material-ui/lab';
 import Map from './Map';
 import Timeline from './Timeline';
 import TopNResults from './TopNResults';
 import SearchField from './SearchField';
 import YearSlider from './YearSlider';
-import LoginDialog from './LoginDialog';
+import { loginUser, logoutUser, createUser } from "../store/actions/authActions";
+import { GoogleLogin } from 'react-google-login'
 
 const styles = theme => ({
     flex: {
@@ -44,9 +49,34 @@ class Home extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {isOpen: false};
-        this.state = {isRegister: false};
+        this.state = {
+            isOpen: false,
+            isRegister: false,
+            email: "",
+            password: "",
+            confirmpassword: "",
+            passwordError: false,
+            open: false
+        };
     }
+
+    handleUserInput (e) {
+        const name = e.target.name;
+        const value = e.target.value;
+        this.setState({name: value});
+    };
+
+    handleEmailChange = ({ target }) => {
+        this.setState({ email: target.value });
+    };
+  
+    handlePasswordChange = ({ target }) => {
+        this.setState({ password: target.value });
+    };
+
+    handleConfirmPasswordChange = ({ target }) => {
+        this.setState({ confirmPassword: target.value });
+    };
 
     toggleDialog = () => {
         this.setState({
@@ -56,7 +86,8 @@ class Home extends Component {
 
     toggleRegister = () => {
         this.setState({
-            isRegister: !this.state.isRegister
+            isRegister: !this.state.isRegister,
+            passwordError: false
         });
     }
 
@@ -65,6 +96,36 @@ class Home extends Component {
             isRegister: false
         })
     }
+
+    handleLogin = () => {
+        const { dispatch } = this.props;
+        const { email, password } = this.state;
+        dispatch(loginUser(email, password));
+        this.toggleDialog()
+    };
+
+    handleRegister = () => {
+        const { dispatch } = this.props;
+        const { email, password, confirmpassword } = this.state;
+        if (password !== confirmpassword) {
+            console.log(password !== confirmpassword)
+            console.log(password)
+            console.log(confirmpassword)
+            this.setState({passwordError: true})
+        } else {
+            dispatch(createUser(email, password))
+            this.toggleDialog()     
+        }
+    }
+
+    handleLogout = () => {
+        const { dispatch } = this.props;
+        dispatch(logoutUser());
+    };
+
+    responseGoogle = (response) => {
+        console.log(response);
+      }
 
     render() {
         const containerStyle = {
@@ -77,7 +138,7 @@ class Home extends Component {
             position: 'fixed',
         };
 
-        const { classes, auth } = this.props;
+        const { classes, isAuthenticated } = this.props;
 
         return (        
             <div style={containerStyle}>
@@ -88,47 +149,51 @@ class Home extends Component {
 	                        COKI Explorer
                             </Typography>
 	                    <SearchField />
-                        <Button variant="contained" className={classes.button} onClick={this.toggleDialog}>
-                            Login
-                        </Button>
+                        {isAuthenticated ? 
+                        <Button variant="contained" className={classes.button} onClick={this.handleLogout}>Logout</Button>:
+                        <Button variant="contained" className={classes.button} onClick={this.toggleDialog}>Login</Button>
+                        }
                         </Toolbar>
                     </AppBar>
+
+                    <Snackbar open={isAuthenticated} autoHideDuration={3000} onClose={() => this.setState({open: false})}><Alert severity="success">Log in successful!</Alert></Snackbar>
 
                     <Dialog open={this.state.isOpen} onClose={this.toggleDialog} aria-labelledby="form-dialog-title">
                     {this.state.isRegister ?
                         [<DialogTitle id="form-dialog-title">Register</DialogTitle>,
                                 <DialogContent>
                                 <TextField
-                                    autoFocus
-                                    margin="dense"
-                                    label="Username"
-                                    type="text"
-                                    fullWidth
-                                />
-                                <TextField
+                                    name="email"
                                     margin="dense"
                                     label="Email"
                                     type="email"
                                     fullWidth
+                                    onChange={(event) => this.handleUserInput(event)}
                                 />
                                 <TextField
+                                    name="password"
                                     margin="dense"
                                     label="Password"
                                     type="password"
                                     fullWidth
+                                    error={this.state.passwordError}
+                                    onChange={(event) => this.handleUserInput(event)}
                                 />
                                 <TextField
+                                    name="confirmPassword"
                                     margin="dense"
                                     label="Confirm Password"
                                     type="password"
                                     fullWidth
+                                    error={this.state.passwordError}
+                                    onChange={(event) => this.handleUserInput(event)}
                                 />
                                 </DialogContent>,
                                 <DialogActions>
                                     <Button variant="text" onClick={this.toggleRegister} color="primary">
                                         Back
                                     </Button>
-                                    <Button variant="contained" onClick={this.toggleDialog} color="primary">
+                                    <Button variant="contained" onClick={this.handleRegister} color="primary">
                                         Create
                                     </Button>
                                 </DialogActions>]
@@ -141,19 +206,29 @@ class Home extends Component {
                                 label="Username"
                                 type="text"
                                 fullWidth
+                                onChange={this.handleEmailChange}
                             />
                             <TextField
                                 id="password"
                                 label="Password"
                                 type="password"
                                 fullWidth
+                                onChange={this.handlePasswordChange}
                             />
+
+                            <GoogleLogin
+                                clientId="1009140869228-g9refvfpf18q1rmic202610flr5pj9ot.apps.googleusercontent.com"
+                                onSuccess={this.responseGoogle}
+                                onFailure={this.responseGoogle}
+                                cookiePolicy={'single_host_origin'}
+                            />
+
                             </DialogContent>,
                             <DialogActions>
                             <Button variant="text" onClick={this.toggleRegister} color="primary">
                                 Register
                             </Button>
-                            <Button variant="contained" onClick={this.toggleDialog} color="primary">
+                            <Button variant="contained" onClick={this.handleLogin} color="primary">
                                 Login
                             </Button>
                         </DialogActions>]
@@ -174,16 +249,19 @@ Home.propTypes = {
     auth: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state) => {
-    const { auth } = state;
 
+const mapStateToProps = (state) => {
     return {
-        auth,
-    };
+        isLoggingIn: state.auth.isLoggingIn,
+        loginError: state.auth.loginError,
+        isAuthenticated: state.auth.isAuthenticated,
+        isLoggingOut: state.auth.isLoggingOut,
+        logoutError: state.auth.logoutError
+    }
 };
 
 const mapDispatchToProps = (dispatch) => {
-    return { };
+    return { dispatch };
 };
 
 export default connect(

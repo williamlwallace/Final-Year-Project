@@ -1,7 +1,120 @@
 import * as types from './actionTypes'
+import { myFirebase } from "../../firebase/firebase";
 
-export function userLogout () {
+const requestLogin = () => {
     return {
-        type: types.USER_LOGOUT
+        type: types.LOGIN_REQUEST
     }
 }
+
+const receiveLogin = () => {
+    return {
+        type: types.LOGIN_SUCCESS
+    }
+}
+
+const loginError = () => {
+    return {
+        type: types.LOGIN_FAILURE
+    }
+}
+
+const requestLogout = () => {
+    return {
+        type: types.LOGOUT_REQUEST
+    }
+}
+
+const receiveLogout = () => {
+    return {
+        type: types.LOGOUT_SUCCESS
+    }
+}
+
+const logoutError = () => {
+    return {
+        type: types.LOGOUT_FAILURE
+    }
+}
+
+const verifyRequest = () => {
+    return {
+        type: types.VERIFY_REQUEST
+    }
+}
+
+const verifySuccess = () => {
+    return {
+        type: types.VERIFY_SUCCESS
+    }
+}
+
+const requestCreateUser = () => {
+    return {
+        type: types.CREATE_USER_REQUEST
+    }
+}
+
+const receiveCreateUser = () => {
+    return {
+        type: types.CREATE_USER_SUCCESS
+    }
+}
+
+const createUserError = () => {
+    return {
+        type: types.CREATE_USER_FAILURE
+    }
+}
+
+
+export const loginUser = (email, password) => dispatch => {
+    dispatch(requestLogin());
+    myFirebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(user => {
+        dispatch(receiveLogin(user));
+      })
+      .catch(error => {
+        //Do something with the error if you want!
+        dispatch(loginError());
+      });
+  };
+  
+  export const logoutUser = () => dispatch => {
+    dispatch(requestLogout());
+    myFirebase
+      .auth()
+      .signOut()
+      .then(() => {
+        dispatch(receiveLogout());
+      })
+      .catch(error => {
+        //Do something with the error if you want!
+        dispatch(logoutError());
+      });
+  };
+  
+  export const verifyAuth = () => dispatch => {
+    dispatch(verifyRequest());
+    myFirebase.auth().onAuthStateChanged(user => {
+      if (user !== null) {
+        dispatch(receiveLogin(user));
+      }
+      dispatch(verifySuccess());
+    });
+  };
+
+  export const createUser = (email, password) => dispatch => {
+      dispatch(requestCreateUser());
+      myFirebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(user => {
+            dispatch(receiveCreateUser(user))
+        })
+        .catch(error => {
+            dispatch(createUserError())
+        })
+  };
