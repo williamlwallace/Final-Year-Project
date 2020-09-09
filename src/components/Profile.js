@@ -4,6 +4,7 @@ import { withStyles, ThemeProvider } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { Button, Text, Paper, Grid, Avatar} from '@material-ui/core';
 import theme from '../themes/cokiTheme';
+import TextField from '@material-ui/core/TextField'
 
 
 
@@ -27,6 +28,20 @@ const styles = theme => ({
 });
 
 class Profile extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            isEdit: false,
+        };
+    }
+
+    toggleEdit = () => {
+        this.setState({
+            isEdit: !this.state.isEdit
+        });
+        console.log(this.state.isEdit)
+    }
     
     render() {
         const { classes, profile, auth } = this.props;
@@ -40,12 +55,23 @@ class Profile extends Component {
                         <Paper className={classes.paper}>Email: {auth.email}</Paper>
                     </Grid>
                     <Grid item xs={12}>
-                        <Paper className={classes.paper}>First Name: {profile.firstName}</Paper>
+                        <Paper className={classes.paper}>
+                            {this.state.isEdit ? <TextField placeholder={profile.firstName}></TextField> : <Typography>First Name: {profile.firstName}</Typography>}
+                        </Paper>
                     </Grid>
                     <Grid item xs={12}>
-                        <Paper className={classes.paper}>Last Name: {profile.lastName}</Paper>
+                        <Paper className={classes.paper}>
+                            {this.state.isEdit ? <TextField placeholder={profile.lastName}></TextField> : <Typography>Last Name: {profile.lastName}</Typography>}
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Paper className={classes.paper}>
+                            {this.state.isEdit ? [<Button onClick={this.toggleEdit}>Cancel</Button>,<Button>Save Changes</Button>] : <Button onClick={this.toggleEdit}>Edit</Button>}
+                        </Paper>
                     </Grid>
                 </Grid>
+
+                
             </div>
         );
     }

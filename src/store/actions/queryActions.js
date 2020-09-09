@@ -1,5 +1,7 @@
 import { eventBus, firebaseAuth } from '../../config';
 import * as types from './actionTypes'
+import { myFirebase } from "../../firebase/firebase";
+import { getFirestore } from 'redux-firestore';
 // TODO: Top-k doi search cache
 
 export function setInstitutionYearSearchResult(institutionYearSearchResult) {
@@ -50,9 +52,16 @@ export function doInstitutionYearKeywordSearch() {
 }
 
 export function doDOISearch(grid_id) {
-    return function (dispatch, getState) {
+    return function (dispatch, getState, {getFirebase, getFirestore}) {
         let query = getState().searchField.value;
         let eb = getState().eventBus.eventBus;
+        const firebase = getFirebase();
+        const firestore = getFirestore();
+
+        firestore.collection('users').doc(myFirebase.auth().currentUser.uid).update({
+            searchHistory: firebase.firestore.FieldValue.arrayUnion(query)
+        })
+
         if (!(query && grid_id && eb)) {
             // You don't have to return Promises, but it's a handy convention
             // so the caller can always call .then() on async dispatch result.
@@ -66,7 +75,7 @@ export function doDOISearch(grid_id) {
                 "errorCode" : 100
             }));
             return Promise.resolve();
-	}
+	    }
 
         let yearMinimum = getState().timeline.selectionStart;
         if (!yearMinimum) yearMinimum = 0;

@@ -12,10 +12,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Menu from '@material-ui/core/Menu'
-import MenuItem from '@material-ui/core/MenuItem'
-import Snackbar from '@material-ui/core/Snackbar'
-import { Alert } from '@material-ui/lab';
 import Map from './Map';
 import Timeline from './Timeline';
 import TopNResults from './TopNResults';
@@ -96,7 +92,6 @@ class Home extends Component {
     }
 
     toggleProfile = () => {
-        console.log(this.state.isProfile)
         this.setState({
             isProfile: !this.state.isProfile
         });
