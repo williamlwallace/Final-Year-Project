@@ -1,6 +1,7 @@
 import * as types from './actionTypes'
 import { myFirebase } from "../../firebase/firebase";
-
+import { getFirestore } from 'redux-firestore';
+ 
 const requestLogin = () => {
     return {
         type: types.LOGIN_REQUEST
@@ -106,15 +107,28 @@ export const loginUser = (email, password) => dispatch => {
     });
   };
 
-  export const createUser = (email, password) => dispatch => {
+  export const createUser = (first, last, email, password) =>  {
+  return (dispatch, getState, {getFirebase, getFirestore}) => {
+    const firebase = getFirebase();
+    const firestore = getFirestore();
       dispatch(requestCreateUser());
       myFirebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
-        .then(user => {
+        .then(response => {
+            return firestore.collection('users').doc(response.user.uid).set({
+                firstName: first,
+                lastName: last,
+                initials: first[0] + last[0]
+            })
+        }).then(
+        
+        user => {
             dispatch(receiveCreateUser(user))
+
         })
         .catch(error => {
             dispatch(createUserError())
         })
+    }
   };

@@ -21,6 +21,7 @@ import Timeline from './Timeline';
 import TopNResults from './TopNResults';
 import SearchField from './SearchField';
 import YearSlider from './YearSlider';
+import Profile from './Profile'
 import { loginUser, logoutUser, createUser } from "../store/actions/authActions";
 import { GoogleLogin } from 'react-google-login'
 
@@ -52,19 +53,22 @@ class Home extends Component {
         this.state = {
             isOpen: false,
             isRegister: false,
+            isProfile: false,
             email: "",
             password: "",
-            confirmpassword: "",
+            confirmPassword: "",
+            firstName: "",
+            lastName: "",
             passwordError: false,
             open: false
         };
     }
 
-    handleUserInput (e) {
-        const name = e.target.name;
-        const value = e.target.value;
-        this.setState({name: value});
-    };
+    handleChange = (e) => {
+        this.setState({
+          [e.target.id]: e.target.value
+        })
+      }
 
     handleEmailChange = ({ target }) => {
         this.setState({ email: target.value });
@@ -91,6 +95,13 @@ class Home extends Component {
         });
     }
 
+    toggleProfile = () => {
+        console.log(this.state.isProfile)
+        this.setState({
+            isProfile: !this.state.isProfile
+        });
+    }
+
     setRegisterState = () => {
         this.setState({
             isRegister: false
@@ -106,20 +117,18 @@ class Home extends Component {
 
     handleRegister = () => {
         const { dispatch } = this.props;
-        const { email, password, confirmpassword } = this.state;
-        if (password !== confirmpassword) {
-            console.log(password !== confirmpassword)
-            console.log(password)
-            console.log(confirmpassword)
+        const { firstName, lastName, email, password, confirmPassword } = this.state;
+        if (password !== confirmPassword) {
             this.setState({passwordError: true})
         } else {
-            dispatch(createUser(email, password))
+            dispatch(createUser(firstName, lastName, email, password))
             this.toggleDialog()     
         }
     }
 
     handleLogout = () => {
         const { dispatch } = this.props;
+        this.setState({isProfile: false})
         dispatch(logoutUser());
     };
 
@@ -138,7 +147,7 @@ class Home extends Component {
             position: 'fixed',
         };
 
-        const { classes, isAuthenticated } = this.props;
+        const { classes, isAuthenticated, profile } = this.props;
 
         return (        
             <div style={containerStyle}>
@@ -150,25 +159,42 @@ class Home extends Component {
                             </Typography>
 	                    <SearchField />
                         {isAuthenticated ? 
-                        <Button variant="contained" className={classes.button} onClick={this.handleLogout}>Logout</Button>:
+                        [<Button variant="contained" className={classes.button} onClick={this.handleLogout}><Typography variant="button" display="block" gutterBottom>Logout</Typography></Button>,
+                        <Button variant="contained" color="secondary" className={classes.button} onClick={this.toggleProfile}><Typography variant="button" display="block" gutterBottom>{profile.initials}</Typography></Button>]:
                         <Button variant="contained" className={classes.button} onClick={this.toggleDialog}>Login</Button>
                         }
                         </Toolbar>
                     </AppBar>
 
-                    <Snackbar open={isAuthenticated} autoHideDuration={3000} onClose={() => this.setState({open: false})}><Alert severity="success">Log in successful!</Alert></Snackbar>
+                    {/* <Snackbar open={profile.isEmpty} autoHideDuration={3000} onClose={() => this.setState({open: false})}><Alert severity="success">Log in successful!</Alert></Snackbar> */}
 
                     <Dialog open={this.state.isOpen} onClose={this.toggleDialog} aria-labelledby="form-dialog-title">
                     {this.state.isRegister ?
                         [<DialogTitle id="form-dialog-title">Register</DialogTitle>,
                                 <DialogContent>
                                 <TextField
+                                    id="firstName"
+                                    margin="dense"
+                                    label="First Name"
+                                    type="text"
+                                    fullWidth
+                                    onChange={this.handleChange}
+                                />
+                                <TextField
+                                    id="lastName"
+                                    margin="dense"
+                                    label="Last Name"
+                                    type="text"
+                                    fullWidth
+                                    onChange={this.handleChange}
+                                />
+                                <TextField
                                     name="email"
                                     margin="dense"
                                     label="Email"
                                     type="email"
                                     fullWidth
-                                    onChange={(event) => this.handleUserInput(event)}
+                                    onChange={(event) => this.handleEmailChange(event)}
                                 />
                                 <TextField
                                     name="password"
@@ -177,7 +203,7 @@ class Home extends Component {
                                     type="password"
                                     fullWidth
                                     error={this.state.passwordError}
-                                    onChange={(event) => this.handleUserInput(event)}
+                                    onChange={(event) => this.handlePasswordChange(event)}
                                 />
                                 <TextField
                                     name="confirmPassword"
@@ -186,7 +212,7 @@ class Home extends Component {
                                     type="password"
                                     fullWidth
                                     error={this.state.passwordError}
-                                    onChange={(event) => this.handleUserInput(event)}
+                                    onChange={(event) => this.handleConfirmPasswordChange(event)}
                                 />
                                 </DialogContent>,
                                 <DialogActions>
@@ -234,11 +260,12 @@ class Home extends Component {
                         </DialogActions>]
                     }
                     </Dialog>
-
+                    {isAuthenticated ? <Profile/> : ""}      
                 </div>
-                <Map />
-                <Timeline />
-                <TopNResults />
+                {this.state.isProfile ? "" : [<Map />,
+                <Timeline />,
+                <TopNResults />]}
+                
             </div>
 	);
     }
@@ -247,11 +274,13 @@ class Home extends Component {
 Home.propTypes = {
     classes: PropTypes.object.isRequired,
     auth: PropTypes.object.isRequired,
+    profile: PropTypes.object.isRequired,
 };
 
 
 const mapStateToProps = (state) => {
     return {
+        profile: state.firebase.profile,
         isLoggingIn: state.auth.isLoggingIn,
         loginError: state.auth.loginError,
         isAuthenticated: state.auth.isAuthenticated,

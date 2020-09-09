@@ -7,6 +7,9 @@ import storage from 'redux-persist/es/storage' // default: localStorage if web, 
 import thunk from 'redux-thunk';
 import rootReducer from './reducers/rootReducer';  
 import initState from './init';
+import { getFirebase } from 'react-redux-firebase'
+import { reduxFirestore, getFirestore } from 'redux-firestore'
+import { myFirebase } from '../firebase/firebase'
 
 export const history = createBrowserHistory();
 
@@ -15,7 +18,10 @@ export default function configureStore() {
 
     const logger = createLogger({});
 
-    let middlewares = [thunk, routerMiddleware(history)];
+    let middlewares = [
+        thunk.withExtraArgument({ getFirebase, getFirestore }),
+        routerMiddleware(history),
+    ];
 
     if (process.env.NODE_ENV !== 'production') {
         middlewares.push(logger); // DEV middlewares
@@ -29,6 +35,7 @@ export default function configureStore() {
 
     const enhancer = composeEnhancers(
         applyMiddleware(...middlewares),
+        reduxFirestore(myFirebase),
     );
 
     const persistorConfig = {
