@@ -73,6 +73,23 @@ export default function authReducer(state = initialState.auth, action) {
                 isAuthenticated: false,
                 createUserError: true
         };
+        case types.UPDATE_USER_REQUEST:
+            return {
+                ...state,
+                isUpdatingUser: true,
+                updateUserError: false,
+        };
+        case types.UPDATE_USER_SUCCESS:
+            return {
+                ...state,
+                isUpdatingUser: false
+        };
+        case types.UPDATE_USER_FAILURE:
+            return {
+                ...state,
+                isUpdatingUser: false,
+                updateUserError: true
+            }
         default:
             return state
     }
