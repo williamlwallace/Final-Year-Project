@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import { Button, Text, Paper, Grid, Avatar} from '@material-ui/core';
 import theme from '../themes/cokiTheme';
 import TextField from '@material-ui/core/TextField'
+import { updateUser } from '../store/actions/authActions';
 
 
 
@@ -33,15 +34,30 @@ class Profile extends Component {
         super(props);
         this.state = {
             isEdit: false,
+            firstName: props.profile.firstName,
+            lastName: props.profile.lastName,
         };
     }
+
+    handleChange = (e) => {
+        this.setState({
+          [e.target.id]: e.target.value
+        })
+      }
 
     toggleEdit = () => {
         this.setState({
             isEdit: !this.state.isEdit
         });
-        console.log(this.state.isEdit)
     }
+
+    updateProfile = () => {
+        const { dispatch } = this.props;
+        const { firstName, lastName} = this.state;
+        dispatch(updateUser(firstName, lastName))
+        this.toggleEdit()
+    }
+
     
     render() {
         const { classes, profile, auth } = this.props;
@@ -56,17 +72,17 @@ class Profile extends Component {
                     </Grid>
                     <Grid item xs={12}>
                         <Paper className={classes.paper}>
-                            {this.state.isEdit ? <TextField placeholder={profile.firstName}></TextField> : <Typography>First Name: {profile.firstName}</Typography>}
+                            {this.state.isEdit ? <TextField id="firstName" defaultValue={profile.firstName} onChange={this.handleChange}></TextField> : <Typography>First Name: {profile.firstName}</Typography>}
                         </Paper>
                     </Grid>
                     <Grid item xs={12}>
                         <Paper className={classes.paper}>
-                            {this.state.isEdit ? <TextField placeholder={profile.lastName}></TextField> : <Typography>Last Name: {profile.lastName}</Typography>}
+                            {this.state.isEdit ? <TextField id="lastName" defaultValue={profile.lastName} onChange={this.handleChange}></TextField> : <Typography>Last Name: {profile.lastName}</Typography>}
                         </Paper>
                     </Grid>
                     <Grid item xs={12}>
                         <Paper className={classes.paper}>
-                            {this.state.isEdit ? [<Button onClick={this.toggleEdit}>Cancel</Button>,<Button>Save Changes</Button>] : <Button onClick={this.toggleEdit}>Edit</Button>}
+                            {this.state.isEdit ? [<Button onClick={this.toggleEdit}>Cancel</Button>,<Button onClick={this.updateProfile}>Save Changes</Button>] : <Button onClick={this.toggleEdit}>Edit</Button>}
                         </Paper>
                     </Grid>
                 </Grid>

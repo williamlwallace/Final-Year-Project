@@ -68,6 +68,24 @@ const createUserError = () => {
     }
 }
 
+const requestUpdateUser = () => {
+    return {
+        type: types.UPDATE_USER_REQUEST
+    }
+}
+
+const recieveUpdateUser = () => {
+    return {
+        type: types.UPDATE_USER_SUCCESS
+    }
+}
+
+const updateUserError = () => {
+    return {
+        type: types.UPDATE_USER_FAILURE
+    }
+}
+
 
 export const loginUser = (email, password) => dispatch => {
     dispatch(requestLogin());
@@ -132,3 +150,20 @@ export const loginUser = (email, password) => dispatch => {
         })
     }
   };
+
+  export const updateUser = (first, last) => {
+      return (dispatch, getState, {getFirebase, getFirestore}) => {
+            const firebase = getFirebase();
+            const firestore = getFirestore();
+            dispatch(requestUpdateUser());
+            firestore.collection('users').doc(myFirebase.auth().currentUser.uid).update({
+                firstName: first,
+                lastName: last
+            }).then(
+                dispatch(recieveUpdateUser())
+            ).catch(error => {
+                dispatch(updateUserError())
+            })
+          
+      }
+  }
