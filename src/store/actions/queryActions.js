@@ -58,9 +58,9 @@ export function doDOISearch(grid_id) {
         const firebase = getFirebase();
         const firestore = getFirestore();
 
-        firestore.collection('users').doc(myFirebase.auth().currentUser.uid).update({
-            searchHistory: firebase.firestore.FieldValue.arrayUnion(query)
-        })
+        // firestore.collection('users').doc(myFirebase.auth().currentUser.uid).update({
+        //     searchHistory: firebase.firestore.FieldValue.arrayUnion(query)
+        // })
 
         if (!(query && grid_id && eb)) {
             // You don't have to return Promises, but it's a handy convention

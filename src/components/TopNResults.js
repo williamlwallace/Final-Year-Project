@@ -14,6 +14,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import StarIcon from '@material-ui/icons/Star';
+import IconButton from '@material-ui/core/IconButton';
+import AddIcon from '@material-ui/icons/Add';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -64,6 +68,9 @@ const styles = theme => ({
     },
     inline: {
         display: 'inline',
+    },
+    iconButton: {
+        marginRight: 10,
     },
 });
 
@@ -178,6 +185,7 @@ class TopNResults extends Component {
                                     <ListSubheader>{`${sectionId}`}</ListSubheader>
                                     {doiSearchResult.results.filter(function(publication) {return publication.source.published_year === sectionId;}).map( (row, index) => (
                                     <ListItem key={row.source.doi}>
+                                        <IconButton className={classes.iconButton}><ChevronLeftIcon /></IconButton>
                                         <ListItemText 
 					    primary={
 			                        <React.Fragment>

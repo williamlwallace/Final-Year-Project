@@ -4,6 +4,7 @@ import AppBar from '@material-ui/core/AppBar';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import InboxIcon from '@material-ui/icons/Inbox';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -17,20 +18,19 @@ import Timeline from './Timeline';
 import TopNResults from './TopNResults';
 import SearchField from './SearchField';
 import YearSlider from './YearSlider';
-import Profile from './Profile'
+import Shoebox from './Shoebox';
+import Profile from './Profile';
 import { loginUser, logoutUser, createUser } from "../store/actions/authActions";
 import { GoogleLogin } from 'react-google-login'
+import { IconButton } from '@material-ui/core';
 
 const styles = theme => ({
     flex: {
         flex: 1,
     },
     menuButton: {
-        marginLeft: -12,
-        marginRight: 20
-    },
-    button: {
-        margin: theme.spacing(1),
+        marginLeft: 10,
+        marginRight: 10
     },
     appBar: {
         background: theme.palette.primary[500],
@@ -50,6 +50,7 @@ class Home extends Component {
             isOpen: false,
             isRegister: false,
             isProfile: false,
+            isShoebox: false,
             email: "",
             password: "",
             confirmPassword: "",
@@ -95,6 +96,12 @@ class Home extends Component {
         this.setState({
             isProfile: !this.state.isProfile
         });
+    }
+
+    toggleShoebox = () => {
+        this.setState({
+            isShoebox: !this.state.isShoebox
+        })
     }
 
     setRegisterState = () => {
@@ -151,12 +158,21 @@ class Home extends Component {
                         <Toolbar>
                             <Typography variant="h6" gutterBottom color="inherit" className={classes.flex}>
 	                        COKI Explorer
+                            <IconButton 
+                                title="Shoebox" 
+                                aria-label="Shoebox"
+                                color={this.state.isShoebox ? 'inherit' : ''}
+                                onClick={this.toggleShoebox} 
+                                className={classes.menuButton}>
+                                <InboxIcon/>
+                            </IconButton>
                             </Typography>
+                            
 	                    <SearchField />
                         {isAuthenticated ? 
-                        [<Button variant="contained" className={classes.button} onClick={this.handleLogout}><Typography variant="button" display="block" gutterBottom>Logout</Typography></Button>,
-                        <Button variant="contained" color="secondary" className={classes.button} onClick={this.toggleProfile}><Typography variant="button" display="block" gutterBottom>{profile.initials}</Typography></Button>]:
-                        <Button variant="contained" className={classes.button} onClick={this.toggleDialog}>Login</Button>
+                        [<Button variant="text" color="inherit" className={classes.menuButton} onClick={this.handleLogout}><Typography variant="button" display="block" gutterBottom>Logout</Typography></Button>,
+                        <Button variant="contained" color="secondary" className={classes.menuButton} onClick={this.toggleProfile}><Typography variant="button" display="block" gutterBottom>{profile.initials}</Typography></Button>]:
+                        <Button variant="text" color="inherit" className={classes.menuButton} onClick={this.toggleDialog}>Login</Button>
                         }
                         </Toolbar>
                     </AppBar>
@@ -259,7 +275,8 @@ class Home extends Component {
                 </div>
                 {this.state.isProfile ? "" : [<Map />,
                 <Timeline />,
-                <TopNResults />]}
+                <TopNResults />,
+                <Shoebox isShoebox={this.state.isShoebox} />]}
                 
             </div>
 	);

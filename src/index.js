@@ -19,7 +19,7 @@ import firebaseConfig from './firebase/firebase'
 
 const store = configureStore();
 // connect to the verticle middleware web socket event bus
-var eventBus = new EventBus('http://localhost:8080/eventbus');
+var eventBus = new EventBus('http://localhost:8081/eventbus');
 eventBus.enableReconnect(true);
 eventBus.onerror = (e) => {
     console.log(e);
