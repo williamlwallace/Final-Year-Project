@@ -13,6 +13,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import PersonIcon from '@material-ui/icons/Person';
 import Map from './Map';
 import Timeline from './Timeline';
 import TopNResults from './TopNResults';
@@ -22,7 +23,7 @@ import Shoebox from './Shoebox';
 import Profile from './Profile';
 import { loginUser, logoutUser, createUser } from "../store/actions/authActions";
 import { GoogleLogin } from 'react-google-login'
-import { IconButton } from '@material-ui/core';
+import { IconButton, Tooltip } from '@material-ui/core';
 
 const styles = theme => ({
     flex: {
@@ -158,21 +159,21 @@ class Home extends Component {
                         <Toolbar>
                             <Typography variant="h6" gutterBottom color="inherit" className={classes.flex}>
 	                        COKI Explorer
-                            <IconButton 
-                                title="Shoebox" 
-                                aria-label="Shoebox"
-                                color={this.state.isShoebox ? 'inherit' : ''}
-                                onClick={this.toggleShoebox} 
-                                className={classes.menuButton}>
-                                <InboxIcon/>
-                            </IconButton>
+                            <Tooltip title="Shoebox" aria-label="Shoebox">
+                                <IconButton
+                                    color={this.state.isShoebox ? 'inherit' : ''}
+                                    onClick={this.toggleShoebox} 
+                                    className={classes.menuButton}>
+                                    <InboxIcon/>
+                                </IconButton>
+                            </Tooltip>
                             </Typography>
                             
 	                    <SearchField />
                         {isAuthenticated ? 
-                        [<Button variant="text" color="inherit" className={classes.menuButton} onClick={this.handleLogout}><Typography variant="button" display="block" gutterBottom>Logout</Typography></Button>,
-                        <Button variant="contained" color="secondary" className={classes.menuButton} onClick={this.toggleProfile}><Typography variant="button" display="block" gutterBottom>{profile.initials}</Typography></Button>]:
-                        <Button variant="text" color="inherit" className={classes.menuButton} onClick={this.toggleDialog}>Login</Button>
+                        [<Button variant="text" color="inherit" className={classes.menuButton} onClick={this.handleLogout}><Typography variant="button" gutterBottom>Logout</Typography></Button>,
+                        <Tooltip title="Profile" aria-label="Profile"><IconButton color={this.state.isProfile ? 'inherit' : ''} className={classes.menuButton} onClick={this.toggleProfile}><PersonIcon/></IconButton></Tooltip>]:
+                        <Button variant="text" color="inherit" className={classes.menuButton} onClick={this.toggleDialog}><Typography variant="button" gutterBottom>Login</Typography></Button>
                         }
                         </Toolbar>
                     </AppBar>

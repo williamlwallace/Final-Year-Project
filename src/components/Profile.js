@@ -12,8 +12,7 @@ import { updateUser } from '../store/actions/authActions';
 const styles = theme => ({
     root: {
         margin: 100,
-        padding: '2px 8px 0px 8px',
-        justifyContents: 'center',
+        justifyContent: 'center',
     },
     paper: {
         maxWidth: 400,
@@ -68,26 +67,54 @@ class Profile extends Component {
                         <Avatar className={classes.avatar}>{profile.initials}</Avatar>
                     </Grid>
                     <Grid item xs={12}>
-                        <Paper className={classes.paper}>Email: {auth.email}</Paper>
+                        <Typography>Email</Typography>
+                        <Paper className={classes.paper}>{auth.email}</Paper>
                     </Grid>
                     <Grid item xs={12}>
                         <Paper className={classes.paper}>
-                            {this.state.isEdit ? <TextField id="firstName" defaultValue={profile.firstName} onChange={this.handleChange}></TextField> : <Typography>First Name: {profile.firstName}</Typography>}
+                            {this.state.isEdit ? 
+                            <TextField id="firstName" defaultValue={profile.firstName} onChange={this.handleChange}></TextField> : 
+                            <Typography>First Name: {profile.firstName}</Typography>}
                         </Paper>
                     </Grid>
                     <Grid item xs={12}>
                         <Paper className={classes.paper}>
-                            {this.state.isEdit ? <TextField id="lastName" defaultValue={profile.lastName} onChange={this.handleChange}></TextField> : <Typography>Last Name: {profile.lastName}</Typography>}
+                            {this.state.isEdit ? 
+                            <TextField id="lastName" defaultValue={profile.lastName} onChange={this.handleChange}></TextField> :
+                            <Typography>Last Name: {profile.lastName}</Typography>}
                         </Paper>
                     </Grid>
                     <Grid item xs={12}>
-                        <Paper className={classes.paper}>
-                            {this.state.isEdit ? [<Button onClick={this.toggleEdit}>Cancel</Button>,<Button onClick={this.updateProfile}>Save Changes</Button>] : <Button onClick={this.toggleEdit}>Edit</Button>}
-                        </Paper>
+                        {this.state.isEdit ? 
+                        [<Button onClick={this.toggleEdit}>Cancel</Button>,<Button onClick={this.updateProfile}>Save Changes</Button>] :
+                        <Button onClick={this.toggleEdit}>Edit</Button>}
                     </Grid>
                 </Grid>
-
-                
+                {/* <Paper className={classes.paper}>
+                <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                        <Avatar className={classes.avatar}>{profile.initials}</Avatar>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Typography>Email: {auth.email}</Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                        {this.state.isEdit ? 
+                        <TextField id="firstName" defaultValue={profile.firstName} onChange={this.handleChange}></TextField> : 
+                        <Typography>First Name: {profile.firstName}</Typography>}
+                    </Grid>
+                    <Grid item xs={12}>
+                        {this.state.isEdit ? 
+                        <TextField id="lastName" defaultValue={profile.lastName} onChange={this.handleChange}></TextField> :
+                        <Typography>Last Name: {profile.lastName}</Typography>}
+                    </Grid>
+                    <Grid item xs={12}>
+                        {this.state.isEdit ? 
+                        [<Button onClick={this.toggleEdit}>Cancel</Button>,<Button onClick={this.updateProfile}>Save Changes</Button>] :
+                        <Button onClick={this.toggleEdit}>Edit</Button>}
+                    </Grid>
+                </Grid>
+                </Paper> */}
             </div>
         );
     }

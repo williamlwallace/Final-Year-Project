@@ -12,6 +12,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 
 import { doDOISearch } from '../store/actions/queryActions';
+import { Grow } from '@material-ui/core';
 
 const styles = theme => ({
     hidden: {
@@ -104,8 +105,10 @@ class Shoebox extends Component {
 
         if (isShoebox) {
             return (
+                
                 <div className={isShoebox ? '' : classes.hidden}>
                     <div className={classes.root} style={style}>
+                    <Grow in={isShoebox}>
                         <Paper className={classes.paper}>
                             <div style={style_top}>
                                 <Grid container alignItems="center">
@@ -122,6 +125,7 @@ class Shoebox extends Component {
                                 hi
                             </List>
                         </Paper>
+                    </Grow>
                     </div>
                 </div>
             )
