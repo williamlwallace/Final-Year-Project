@@ -6,6 +6,7 @@ import { Button, Text, Paper, Grid, Avatar} from '@material-ui/core';
 import theme from '../themes/cokiTheme';
 import TextField from '@material-ui/core/TextField'
 import { updateUser } from '../store/actions/authActions';
+import { FullscreenExit } from '@material-ui/icons';
 
 
 
@@ -24,6 +25,10 @@ const styles = theme => ({
         margin: `${theme.spacing(1)}px auto`,
         padding: theme.spacing(2),
         backgroundColor: theme.palette.secondary[500]
+    },
+    buttons: {
+        display: 'flex',
+        justifyContent: 'center'
     },
 });
 
@@ -62,59 +67,35 @@ class Profile extends Component {
         const { classes, profile, auth } = this.props;
         return (
             <div className={classes.root}>
-                <Grid container spacing={3}>
+                <Grid container direction="column" justify="center" spacing={3}>
                     <Grid item xs={12}>
                         <Avatar className={classes.avatar}>{profile.initials}</Avatar>
                     </Grid>
                     <Grid item xs={12}>
-                        <Typography>Email</Typography>
-                        <Paper className={classes.paper}>{auth.email}</Paper>
+                        <Paper className={classes.paper}><Typography gutterBottom>Email: {auth.email}</Typography></Paper>
                     </Grid>
                     <Grid item xs={12}>
                         <Paper className={classes.paper}>
                             {this.state.isEdit ? 
                             <TextField id="firstName" defaultValue={profile.firstName} onChange={this.handleChange}></TextField> : 
-                            <Typography>First Name: {profile.firstName}</Typography>}
+                            <Typography gutterBottom>First Name: {profile.firstName}</Typography>}
                         </Paper>
                     </Grid>
                     <Grid item xs={12}>
                         <Paper className={classes.paper}>
                             {this.state.isEdit ? 
                             <TextField id="lastName" defaultValue={profile.lastName} onChange={this.handleChange}></TextField> :
-                            <Typography>Last Name: {profile.lastName}</Typography>}
+                            <Typography gutterBottom>Last Name: {profile.lastName}</Typography>}
                         </Paper>
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid container justify="center">
+                        <Grid className={classes.buttons} item xs={3}>
                         {this.state.isEdit ? 
                         [<Button onClick={this.toggleEdit}>Cancel</Button>,<Button onClick={this.updateProfile}>Save Changes</Button>] :
                         <Button onClick={this.toggleEdit}>Edit</Button>}
+                        </Grid>
                     </Grid>
                 </Grid>
-                {/* <Paper className={classes.paper}>
-                <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                        <Avatar className={classes.avatar}>{profile.initials}</Avatar>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Typography>Email: {auth.email}</Typography>
-                    </Grid>
-                    <Grid item xs={12}>
-                        {this.state.isEdit ? 
-                        <TextField id="firstName" defaultValue={profile.firstName} onChange={this.handleChange}></TextField> : 
-                        <Typography>First Name: {profile.firstName}</Typography>}
-                    </Grid>
-                    <Grid item xs={12}>
-                        {this.state.isEdit ? 
-                        <TextField id="lastName" defaultValue={profile.lastName} onChange={this.handleChange}></TextField> :
-                        <Typography>Last Name: {profile.lastName}</Typography>}
-                    </Grid>
-                    <Grid item xs={12}>
-                        {this.state.isEdit ? 
-                        [<Button onClick={this.toggleEdit}>Cancel</Button>,<Button onClick={this.updateProfile}>Save Changes</Button>] :
-                        <Button onClick={this.toggleEdit}>Edit</Button>}
-                    </Grid>
-                </Grid>
-                </Paper> */}
             </div>
         );
     }

@@ -24,6 +24,7 @@ import Profile from './Profile';
 import { loginUser, logoutUser, createUser } from "../store/actions/authActions";
 import { GoogleLogin } from 'react-google-login'
 import { IconButton, Tooltip } from '@material-ui/core';
+import { myFirebase } from "../firebase/firebase";
 
 const styles = theme => ({
     flex: {
@@ -150,7 +151,7 @@ class Home extends Component {
             position: 'fixed',
         };
 
-        const { classes, isAuthenticated, profile } = this.props;
+        const { classes, isAuthenticated } = this.props;
 
         return (        
             <div style={containerStyle}>
@@ -240,8 +241,8 @@ class Home extends Component {
                             <DialogContent>
                             <TextField
                                 autoFocus
-                                id="username"
-                                label="Username"
+                                id="emaillogin"
+                                label="Email"
                                 type="text"
                                 fullWidth
                                 onChange={this.handleEmailChange}
@@ -296,7 +297,7 @@ const mapStateToProps = (state) => {
         profile: state.firebase.profile,
         isLoggingIn: state.auth.isLoggingIn,
         loginError: state.auth.loginError,
-        isAuthenticated: state.auth.isAuthenticated,
+        isAuthenticated: !(state.firebase.auth.isEmpty),
         isLoggingOut: state.auth.isLoggingOut,
         logoutError: state.auth.logoutError
     }

@@ -74,7 +74,7 @@ const requestUpdateUser = () => {
     }
 }
 
-const recieveUpdateUser = () => {
+const receiveUpdateUser = () => {
     return {
         type: types.UPDATE_USER_SUCCESS
     }
@@ -125,29 +125,29 @@ export const loginUser = (email, password) => dispatch => {
     });
   };
 
-  export const createUser = (first, last, email, password) =>  {
-  return (dispatch, getState, {getFirebase, getFirestore}) => {
-    const firebase = getFirebase();
-    const firestore = getFirestore();
-      dispatch(requestCreateUser());
-      myFirebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then(response => {
-            return firestore.collection('users').doc(response.user.uid).set({
-                firstName: first,
-                lastName: last,
-                initials: first[0] + last[0]
-            })
-        }).then(
-        
-        user => {
-            dispatch(receiveCreateUser(user))
+  export const createUser = (first, last, email, password) => {
+    return (dispatch, getState, {getFirebase, getFirestore}) => {
+        const firebase = getFirebase();
+        const firestore = getFirestore();
+        dispatch(requestCreateUser());
+        myFirebase
+            .auth()
+            .createUserWithEmailAndPassword(email, password)
+            .then(response => {
+                return firestore.collection('users').doc(response.user.uid).set({
+                    firstName: first,
+                    lastName: last,
+                    initials: first[0] + last[0]
+                })
+            }).then(
+            
+            user => {
+                dispatch(receiveCreateUser(user))
 
-        })
-        .catch(error => {
-            dispatch(createUserError())
-        })
+            })
+            .catch(error => {
+                dispatch(createUserError())
+            })
     }
   };
 
@@ -160,7 +160,7 @@ export const loginUser = (email, password) => dispatch => {
                 firstName: first,
                 lastName: last
             }).then(
-                dispatch(recieveUpdateUser())
+                dispatch(receiveUpdateUser())
             ).catch(error => {
                 dispatch(updateUserError())
             })

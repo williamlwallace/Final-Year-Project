@@ -1,7 +1,6 @@
 import { eventBus, firebaseAuth } from '../../config';
 import * as types from './actionTypes'
 import { myFirebase } from "../../firebase/firebase";
-import { getFirestore } from 'redux-firestore';
 // TODO: Top-k doi search cache
 
 export function setInstitutionYearSearchResult(institutionYearSearchResult) {
@@ -55,12 +54,16 @@ export function doDOISearch(grid_id) {
     return function (dispatch, getState, {getFirebase, getFirestore}) {
         let query = getState().searchField.value;
         let eb = getState().eventBus.eventBus;
+        let auth = !getState().firebase.auth.isEmpty;
         const firebase = getFirebase();
         const firestore = getFirestore();
 
-        // firestore.collection('users').doc(myFirebase.auth().currentUser.uid).update({
-        //     searchHistory: firebase.firestore.FieldValue.arrayUnion(query)
-        // })
+        // Adds search query to user's search history only if they are logged in and authenticated
+        if (auth) {
+            firestore.collection('users').doc(myFirebase.auth().currentUser.uid).update({
+                searchHistory: firebase.firestore.FieldValue.arrayUnion(query)
+            });
+        }
 
         if (!(query && grid_id && eb)) {
             // You don't have to return Promises, but it's a handy convention

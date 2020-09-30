@@ -29,6 +29,8 @@ import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 
 import { doDOISearch } from '../store/actions/queryActions';
+import { updateShoebox } from '../store/actions/shoeboxActions';
+import { dispatch } from 'd3';
 
 const styles = theme => ({
     hidden: {
@@ -185,7 +187,7 @@ class TopNResults extends Component {
                                     <ListSubheader>{`${sectionId}`}</ListSubheader>
                                     {doiSearchResult.results.filter(function(publication) {return publication.source.published_year === sectionId;}).map( (row, index) => (
                                     <ListItem key={row.source.doi}>
-                                        <IconButton className={classes.iconButton}><ChevronLeftIcon /></IconButton>
+                                        <IconButton className={classes.iconButton} onClick={() => updateShoebox(row.source)}><ChevronLeftIcon/></IconButton>
                                         <ListItemText 
 					    primary={
 			                        <React.Fragment>
@@ -239,9 +241,11 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
     return ({
         doDOISearch: (gridId) => { dispatch(doDOISearch(gridId)) },
-    });
+        updateShoebox: (source) => { dispatch(updateShoebox(source)) },
+        });
 }
 
 export default connect(
-    mapStateToProps, mapDispatchToProps
+    mapStateToProps, 
+    mapDispatchToProps
 )(withStyles(styles)(TopNResults));

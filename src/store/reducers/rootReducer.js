@@ -7,6 +7,7 @@ import timeline from './timelineReducer';
 import yearSlider from './yearSliderReducer';
 import auth from './authReducer';
 import eventBus from './eventBusReducer';
+import shoeboxReducer from './shoeboxReducer'
 import { connectRouter } from 'connected-react-router';
 import { firebaseReducer } from 'react-redux-firebase';
 import { firestoreReducer } from 'redux-firestore';
@@ -23,6 +24,7 @@ export default (history) => combineReducers({
     yearSlider,
     eventBus,
     firebase: firebaseReducer,
-    firestore: firestoreReducer
+    firestore: firestoreReducer,
+    shoebox: shoeboxReducer
 })
 

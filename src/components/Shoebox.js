@@ -11,8 +11,8 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 
-import { doDOISearch } from '../store/actions/queryActions';
-import { Grow } from '@material-ui/core';
+import { Grow, IconButton, TextField } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const styles = theme => ({
     hidden: {
@@ -56,20 +56,6 @@ const styles = theme => ({
 });
 
 class Shoebox extends Component {
-
-    componentDidUpdate(prevProps) {
-        const { doDOISearch, 
-            selectedGridId, 
-            timelineSelectionStart, 
-            timelineSelectionEnd, 
-            institutionYearSearchResult } = this.props;
-        if ((prevProps.institutionYearSearchResult !== institutionYearSearchResult) || 
-            (prevProps.timelineSelectionStart !== timelineSelectionStart) ||
-            (prevProps.timelineSelectionEnd !== timelineSelectionEnd) ||
-            (prevProps.selectedGridId !== selectedGridId)) {
-            doDOISearch(selectedGridId);
-        }
-    }
 
     render() {
         const { classes, isShoebox } = this.props;
@@ -121,8 +107,27 @@ class Shoebox extends Component {
                             </div>
 
                             <Divider variant="middle" />
-                            <List>
-                                hi
+                            <List className={classes.root} style={style_list}>
+                                <ListItem>
+                                <ListItemText
+                                    primary={
+                                        <a href="www.google.com">Increasing complexity with quantum physics</a>
+                                    }
+                                    secondary={
+                                        <Typography variant="body2" className={classes.inline}>
+                                            Janet Anders, Karoline Wiesner
+                                        </Typography>
+                                    }      
+                                />
+                                <ListItemText secondary={
+                                      <Typography variant="body2" className={classes.inline}>
+                                      Quantum physics (11.46)
+                                  </Typography>
+                                }
+                                />
+                                <IconButton className={classes.iconButton}><DeleteIcon/></IconButton>
+                                </ListItem>
+                                <TextField className={classes.style_top}></TextField>
                             </List>
                         </Paper>
                     </Grow>
@@ -137,20 +142,13 @@ class Shoebox extends Component {
 
 const mapStateToProps = state => {
     return {
-        institutionYearSearchResult: state.queryResults.institutionYearSearchResult,
-        doiSearchResult: state.queryResults.doiSearchResult,
-        pickedGridId: state.map.pickedGridId,
-        selectedGridId: state.map.selectedGridId,
-        yearSliderSelectionStart: state.yearSlider.selectionStart,
-        yearSliderSelectionEnd: state.yearSlider.selectionEnd,
-        timelineSelectionStart: state.timeline.selectionStart,
-        timelineSelectionEnd: state.timeline.selectionEnd,
+        
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return ({
-        doDOISearch: (gridId) => { dispatch(doDOISearch(gridId)) },
+        dispatch
     });
 }
 
