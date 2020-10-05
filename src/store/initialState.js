@@ -43,6 +43,4 @@ export default {
     eventBus: {
         eventBus: null,
     },
-    shoebox: {
-    }
 }

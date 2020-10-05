@@ -20,47 +20,105 @@ const updateShoeboxError = () => {
     }
 }
 
+const requestDeleteShoeboxItem = () => {
+    return {
+        type: types.DELETE_SHOEBOX_REQUEST
+    }
+}
+
+const receiveDeleteShoeboxItem = () => {
+    return {
+        type: types.DELETE_SHOEBOX_SUCCESS
+    }
+}
+
+const deleteShoeboxItemError = () => {
+    return {
+        type: types.DELETE_SHOEBOX_FAILURE
+    }
+}
+
+const requestUpdateShoeboxItemNotes = () => {
+    return {
+        type: types.UPDATE_NOTES_REQUEST
+    }
+}
+
+const receiveUpdateShoeboxItemNotes = () => {
+    return {
+        type: types.UPDATE_NOTES_SUCCESS
+    }
+}
+
+const updateShoeboxItemNotesError = () => {
+    return {
+        type: types.UPDATE_NOTES_FAILURE
+    }
+}
+
 export const updateShoebox = (source) => {
-    console.log('1')
     return (dispatch, getState, {getFirebase, getFirestore}) => {
-        console.log('2')
         let query = getState().searchField.value;
         let gridId = getState().queryResults.doiSearchResult.grid_id;
         const firestore = getFirestore();
         const firebase = getFirebase();
         dispatch(requestUpdateShoebox);
         firestore.collection('users').doc(myFirebase.auth().currentUser.uid).update({
-            shoeBox: myFirebase.firestore.FieldValue.arrayUnion(source.title)
-                // authors: "source.authors",
-                // query: query,
-                // gridId: gridId,
-                // notes: "",   
+            shoebox: firebase.firestore.FieldValue.arrayUnion({
+                title: source.title,
+                authors: source.authors,
+                query: query,
+                gridId: gridId,
+                doi: source.doi,
+                notes: ""
+            })
         }).then(
             dispatch(receiveUpdateShoebox())
         ).catch(error => {
-            dispatch(updateShoeboxError)
+            dispatch(updateShoeboxError())
         })
     }
 }
 
-// firestore.collection('users').doc(myFirebase.auth().currentUser.uid).update({
-        //     searchHistory: firebase.firestore.FieldValue.arrayUnion(query)
-        // })
-
-// export const updateUser = (first, last) => {
-//     return (dispatch, getState, {getFirebase, getFirestore}) => {
-//           const firebase = getFirebase();
-//           const firestore = getFirestore();
-//           dispatch(requestUpdateUser());
-//           firestore.collection('users').doc(myFirebase.auth().currentUser.uid).update({
-//               firstName: first,
-//               lastName: last
-//           }).then(
-//               dispatch(receiveUpdateUser())
-//           ).catch(error => {
-//               dispatch(updateUserError())
-//           })
+export const updateShoeboxItemNotes = (index, notes) => {
+    return (dispatch, getState, {getFirebase, getFirestore}) => {
+        const firestore = getFirestore();
+        const firebase = getFirebase();
+        console.log(index, notes)
+        const ref = firestore.collection('users').doc(myFirebase.auth().currentUser.uid);
+        ref.get().then(doc => {
+            const shoeboxArray = doc.data().shoebox
+            shoeboxArray[index].notes = notes
+            ref.update({
+                shoebox: shoeboxArray
+            }).then(
+                dispatch(receiveUpdateShoeboxItemNotes())
+            ).catch(error => {
+                dispatch(updateShoeboxItemNotesError())
+            })
+        })
         
-//     }
-// }
+    }
+}
 
+export const deleteShoeboxItem = (index) => { 
+    return (dispatch, getState, {getFirebase, getFirestore}) => {
+        const firestore = getFirestore();
+        const firebase = getFirebase();
+        dispatch(requestDeleteShoeboxItem())
+        const ref = firestore.collection('users').doc(myFirebase.auth().currentUser.uid);
+        ref.get().then(doc => {
+            const shoeboxArray = doc.data().shoebox;
+            shoeboxArray.splice(index, 1);
+            ref.update({
+                shoebox: shoeboxArray
+           }).then(
+               dispatch(receiveDeleteShoeboxItem())
+           ).catch(error => {
+               dispatch(deleteShoeboxItemError())
+           })
+        })
+        
+        
+    }
+}

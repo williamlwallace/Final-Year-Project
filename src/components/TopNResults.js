@@ -18,6 +18,7 @@ import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import Tooltip from '@material-ui/core/Tooltip'
 
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -130,7 +131,7 @@ class TopNResults extends Component {
     }
 
     render() {
-        const { classes, doiSearchResult } = this.props;
+        const { classes, doiSearchResult, updateShoebox } = this.props;
         const style = {
             boxShadow: 'none',
             margin: '0px', 
@@ -187,7 +188,7 @@ class TopNResults extends Component {
                                     <ListSubheader>{`${sectionId}`}</ListSubheader>
                                     {doiSearchResult.results.filter(function(publication) {return publication.source.published_year === sectionId;}).map( (row, index) => (
                                     <ListItem key={row.source.doi}>
-                                        <IconButton className={classes.iconButton} onClick={() => updateShoebox(row.source)}><ChevronLeftIcon/></IconButton>
+                                        <Tooltip title="Send to shoebox" aria-label="Send to shoebox"><IconButton className={classes.iconButton} onClick={() => updateShoebox(row.source)}><ChevronLeftIcon/></IconButton></Tooltip>
                                         <ListItemText 
 					    primary={
 			                        <React.Fragment>
