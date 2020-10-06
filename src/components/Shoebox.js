@@ -62,6 +62,10 @@ const styles = theme => ({
     },
     empty: {
         margin: 100,
+    },
+    icon_button: {
+        maxHeight: 50,
+        maxWidth: 50
     }
 });
 
@@ -162,7 +166,7 @@ class Shoebox extends Component {
                                             </React.Fragment>
                                         }      
                                     /></Grid>
-                                    <Tooltip title="Remove from shoebox" aria-label="Remove from shoebox"><IconButton onClick={() => deleteShoeboxItem(index)}><DeleteIcon/></IconButton></Tooltip></Grid>
+                                    <Tooltip title="Remove from shoebox" aria-label="Remove from shoebox"><IconButton className={classes.icon_button} onClick={() => deleteShoeboxItem(index)}><DeleteIcon/></IconButton></Tooltip></Grid>
                                     <TextField label="Notes" id="notes" multiline rowsMax={4} defaultValue={source.notes} onChange={(event) => updateShoeboxItemNotes(index, event.target.value)}></TextField>
                                     </Grid>
                                     </ListItem>

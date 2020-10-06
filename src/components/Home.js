@@ -21,6 +21,7 @@ import SearchField from './SearchField';
 import YearSlider from './YearSlider';
 import Shoebox from './Shoebox';
 import Profile from './Profile';
+import Login from './Login';
 import { loginUser, logoutUser, createUser } from "../store/actions/authActions";
 import { GoogleLogin } from 'react-google-login'
 import { IconButton, Tooltip } from '@material-ui/core';
@@ -180,8 +181,8 @@ class Home extends Component {
                     </AppBar>
 
                     {/* <Snackbar open={profile.isEmpty} autoHideDuration={3000} onClose={() => this.setState({open: false})}><Alert severity="success">Log in successful!</Alert></Snackbar> */}
-
-                    <Dialog open={this.state.isOpen} onClose={this.toggleDialog} aria-labelledby="form-dialog-title">
+                        <Login isOpen={this.state.isOpen}/>
+                    {/* <Dialog open={this.state.isOpen} onClose={this.toggleDialog} aria-labelledby="form-dialog-title">
                     {this.state.isRegister ?
                         [<DialogTitle id="form-dialog-title">Register</DialogTitle>,
                                 <DialogContent>
@@ -272,7 +273,7 @@ class Home extends Component {
                             </Button>
                         </DialogActions>]
                     }
-                    </Dialog>
+                    </Dialog> */}
                     {isAuthenticated ? <Profile/> : ""}      
                 </div>
                 {this.state.isProfile ? "" : [<Map />,
