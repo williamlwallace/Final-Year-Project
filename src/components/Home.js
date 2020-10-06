@@ -181,7 +181,7 @@ class Home extends Component {
                     </AppBar>
 
                     {/* <Snackbar open={profile.isEmpty} autoHideDuration={3000} onClose={() => this.setState({open: false})}><Alert severity="success">Log in successful!</Alert></Snackbar> */}
-                        <Login isOpen={this.state.isOpen}/>
+                        <Login isOpen={this.state.isOpen} toggleDialog={this.toggleDialog}/>
                     {/* <Dialog open={this.state.isOpen} onClose={this.toggleDialog} aria-labelledby="form-dialog-title">
                     {this.state.isRegister ?
                         [<DialogTitle id="form-dialog-title">Register</DialogTitle>,

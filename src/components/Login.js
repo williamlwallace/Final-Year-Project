@@ -8,26 +8,21 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import Grid from '@material-ui/core/Grid'
 import { GoogleLogin } from 'react-google-login'
 
 import { loginUser, logoutUser, createUser } from "../store/actions/authActions";
 
 const styles = theme => ({
-    flex: {
-        flex: 1,
-    },
-    menuButton: {
-        marginLeft: 10,
-        marginRight: 10
-    },
-    appBar: {
-        background: theme.palette.primary[500],
-        opacity: 0.95,
+    grid: {
+        display: 'grid'
     },
     textField: {
-        marginLeft: theme.spacing(1),
-        marginRight: theme.spacing(1),
+        minWidth: 400
     },
+    footer: {
+        marginTop: theme.spacing(1),
+    }
 });
 
 class Login extends Component {
@@ -35,6 +30,7 @@ class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isOpen: false,
             isRegister: false,
             email: "",
             password: "",
@@ -42,6 +38,7 @@ class Login extends Component {
             firstName: "",
             lastName: "",
             passwordError: false,
+            helperText: "",
         };
     }
 
@@ -61,6 +58,14 @@ class Login extends Component {
 
     handleConfirmPasswordChange = ({ target }) => {
         this.setState({ confirmPassword: target.value });
+        if (this.state.password !== this.state.confirmPassword) {
+            this.setState({ 
+                passwordError: true,
+                helperText: "Passwords do not match"
+             })
+        } if (this.state.password == this.state.confirmPassword) {
+            this.setState({ passwordError: false })
+        }
     };
 
     handleLogin = () => {
@@ -88,70 +93,84 @@ class Login extends Component {
         });
     }
 
+
     render() {
 
-        const {classes, isRegister, isOpen, toggleDialog} = this.props;
+        const {classes, isOpen, toggleDialog} = this.props;
 
         return(
         <Dialog open={isOpen} onClose={toggleDialog} aria-labelledby="form-dialog-title">
-        {isRegister ?
-        [<DialogTitle id="form-dialog-title">Register</DialogTitle>,
-            <DialogContent>
-                <TextField
+        {this.state.isRegister ?
+        <React.Fragment>
+        <DialogTitle id="form-dialog-title">Register</DialogTitle>
+            <DialogContent className={classes.grid}>
+                <Grid container spacing={2}>
+                <Grid item><TextField
                     id="firstName"
                     margin="dense"
                     label="First Name"
                     type="text"
                     fullWidth
                     onChange={this.handleChange}
-                />
-                <TextField
+                /></Grid>
+                <Grid item><TextField
                     id="lastName"
                     margin="dense"
                     label="Last Name"
                     type="text"
                     fullWidth
                     onChange={this.handleChange}
-                />
+                /></Grid>
+                </Grid>
                 <TextField
+                    className={classes.textField}
                     name="email"
                     margin="dense"
                     label="Email"
                     type="email"
                     fullWidth
+                    required
                     onChange={(event) => this.handleEmailChange(event)}
                 />
                 <TextField
+                    className={classes.textField}
                     name="password"
                     margin="dense"
                     label="Password"
                     type="password"
                     fullWidth
+                    required
                     error={this.state.passwordError}
                     onChange={(event) => this.handlePasswordChange(event)}
                 />
                 <TextField
+                    className={classes.textField}
                     name="confirmPassword"
                     margin="dense"
                     label="Confirm Password"
                     type="password"
                     fullWidth
+                    required
                     error={this.state.passwordError}
                     onChange={(event) => this.handleConfirmPasswordChange(event)}
+                    helperText={this.state.helperText}
                 />
-            </DialogContent>,
-            <DialogActions>
-                    <Button variant="text" onClick={this.toggleRegister} color="primary">
-                        Back
-                    </Button>
-                    <Button variant="contained" onClick={this.handleRegister} color="primary">
-                        Create
-                    </Button>
-            </DialogActions>]
+            </DialogContent>
+        <DialogActions className={classes.footer}>
+            <Button variant="text" onClick={this.toggleRegister} color="primary">
+                Back
+            </Button>
+            <Button variant="contained" onClick={this.handleRegister} color="primary">
+                Create
+            </Button>
+        </DialogActions>
+        </React.Fragment>
         :
-        [<DialogTitle id="form-dialog-title">Login</DialogTitle>,
-            <DialogContent>
+        <React.Fragment>
+        <DialogTitle id="form-dialog-title">Login</DialogTitle>,
+            <DialogContent className={classes.grid}>
                 <TextField
+                    className={classes.textField}
                     autoFocus
                     id="emaillogin"
                     label="Email"
@@ -160,6 +179,7 @@ class Login extends Component {
                     onChange={this.handleEmailChange}
                 />
                 <TextField
+                    className={classes.textField}
                     id="password"
                     label="Password"
                     type="password"
@@ -167,22 +187,23 @@ class Login extends Component {
                     onChange={this.handlePasswordChange}
                 />
 
-                <GoogleLogin
+                {/* <GoogleLogin
                     clientId="1009140869228-g9refvfpf18q1rmic202610flr5pj9ot.apps.googleusercontent.com"
                     onSuccess={this.responseGoogle}
                     onFailure={this.responseGoogle}
                     cookiePolicy={'single_host_origin'}
-                />
+                /> */}
 
-            </DialogContent>,
-        <DialogActions>
-                <Button variant="text" onClick={this.toggleRegister} color="primary">
-                    Register
-                </Button>
-                <Button variant="contained" onClick={this.handleLogin} color="primary">
-                    Login
-                </Button>
-        </DialogActions>]
+            </DialogContent>
+        <DialogActions className={classes.footer}>
+            <Button variant="text" onClick={this.toggleRegister} color="primary">
+                Register
+            </Button>
+            <Button variant="contained" onClick={this.handleLogin} color="primary">
+                Login
+            </Button>
+        </DialogActions>
+        </React.Fragment>
         }
         </Dialog>
         )
