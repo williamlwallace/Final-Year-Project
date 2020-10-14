@@ -18,7 +18,10 @@ class App extends Component {
     }
 }
 const mapStateToProps = (state) => {
-   return { };
+   return {
+       isAuthenticated: state.auth.isAuthenticated,
+       isVerifiyng: state.auth.isVerifiyng
+    };
 };
 
 export default connect(mapStateToProps, { } )(App);

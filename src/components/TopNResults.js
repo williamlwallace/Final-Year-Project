@@ -14,6 +14,11 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import StarIcon from '@material-ui/icons/Star';
+import IconButton from '@material-ui/core/IconButton';
+import AddIcon from '@material-ui/icons/Add';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import Tooltip from '@material-ui/core/Tooltip'
 
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -25,6 +30,8 @@ import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 
 import { doDOISearch } from '../store/actions/queryActions';
+import { updateShoebox } from '../store/actions/shoeboxActions';
+import { dispatch } from 'd3';
 
 const styles = theme => ({
     hidden: {
@@ -64,6 +71,9 @@ const styles = theme => ({
     },
     inline: {
         display: 'inline',
+    },
+    iconButton: {
+        marginRight: 10,
     },
 });
 
@@ -121,7 +131,7 @@ class TopNResults extends Component {
     }
 
     render() {
-        const { classes, doiSearchResult } = this.props;
+        const { classes, doiSearchResult, updateShoebox } = this.props;
         const style = {
             boxShadow: 'none',
             margin: '0px', 
@@ -178,6 +188,7 @@ class TopNResults extends Component {
                                     <ListSubheader>{`${sectionId}`}</ListSubheader>
                                     {doiSearchResult.results.filter(function(publication) {return publication.source.published_year === sectionId;}).map( (row, index) => (
                                     <ListItem key={row.source.doi}>
+                                        <Tooltip title="Send to shoebox" aria-label="Send to shoebox"><IconButton className={classes.iconButton} onClick={() => updateShoebox(row.source)}><ChevronLeftIcon/></IconButton></Tooltip>
                                         <ListItemText 
 					    primary={
 			                        <React.Fragment>
@@ -231,9 +242,11 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
     return ({
         doDOISearch: (gridId) => { dispatch(doDOISearch(gridId)) },
-    });
+        updateShoebox: (source) => { dispatch(updateShoebox(source)) },
+        });
 }
 
 export default connect(
-    mapStateToProps, mapDispatchToProps
+    mapStateToProps, 
+    mapDispatchToProps
 )(withStyles(styles)(TopNResults));
