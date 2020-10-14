@@ -12,6 +12,7 @@ import Grid from '@material-ui/core/Grid'
 import { GoogleLogin } from 'react-google-login'
 
 import { loginUser, logoutUser, createUser } from "../store/actions/authActions";
+import { TransferWithinAStationSharp } from '@material-ui/icons';
 
 const styles = theme => ({
     grid: {
@@ -72,7 +73,6 @@ class Login extends Component {
         const { dispatch } = this.props;
         const { email, password } = this.state;
         dispatch(loginUser(email, password));
-        this.toggleDialog()
     };
 
     handleRegister = () => {
@@ -82,7 +82,6 @@ class Login extends Component {
             this.setState({passwordError: true})
         } else {
             dispatch(createUser(firstName, lastName, email, password))
-            this.toggleDialog()     
         }
     }
 

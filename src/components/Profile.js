@@ -38,8 +38,8 @@ class Profile extends Component {
         super(props);
         this.state = {
             isEdit: false,
-            firstName: props.profile.firstName,
-            lastName: props.profile.lastName,
+            firstName: this.props.profile.firstName,
+            lastName: this.props.profile.lastName,
         };
     }
 
@@ -51,6 +51,8 @@ class Profile extends Component {
 
     toggleEdit = () => {
         this.setState({
+            firstName: this.props.profile.firstName,
+            lastName: this.props.profile.lastName,
             isEdit: !this.state.isEdit
         });
     }

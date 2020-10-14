@@ -179,10 +179,9 @@ class Home extends Component {
                         }
                         </Toolbar>
                     </AppBar>
-
-                    {/* <Snackbar open={profile.isEmpty} autoHideDuration={3000} onClose={() => this.setState({open: false})}><Alert severity="success">Log in successful!</Alert></Snackbar> */}
-                        <Login isOpen={this.state.isOpen} toggleDialog={this.toggleDialog}/>
-                    {/* <Dialog open={this.state.isOpen} onClose={this.toggleDialog} aria-labelledby="form-dialog-title">
+                    
+                    {/* <Login isOpen={this.state.isOpen} toggleDialog={this.toggleDialog}/> */}
+                    <Dialog open={this.state.isOpen} onClose={this.toggleDialog} aria-labelledby="form-dialog-title">
                     {this.state.isRegister ?
                         [<DialogTitle id="form-dialog-title">Register</DialogTitle>,
                                 <DialogContent>
@@ -256,12 +255,6 @@ class Home extends Component {
                                 onChange={this.handlePasswordChange}
                             />
 
-                            <GoogleLogin
-                                clientId="1009140869228-g9refvfpf18q1rmic202610flr5pj9ot.apps.googleusercontent.com"
-                                onSuccess={this.responseGoogle}
-                                onFailure={this.responseGoogle}
-                                cookiePolicy={'single_host_origin'}
-                            />
 
                             </DialogContent>,
                             <DialogActions>
@@ -273,7 +266,7 @@ class Home extends Component {
                             </Button>
                         </DialogActions>]
                     }
-                    </Dialog> */}
+                    </Dialog>
                     {isAuthenticated ? <Profile/> : ""}      
                 </div>
                 {this.state.isProfile ? "" : [<Map />,

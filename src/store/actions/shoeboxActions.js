@@ -56,6 +56,7 @@ const updateShoeboxItemNotesError = () => {
     }
 }
 
+// Creates a new shoebox item in the logged in user's data
 export const updateShoebox = (source) => {
     return (dispatch, getState, {getFirebase, getFirestore}) => {
         let query = getState().searchField.value;
@@ -80,6 +81,7 @@ export const updateShoebox = (source) => {
     }
 }
 
+// Sets or updates the shoebox item notes
 export const updateShoeboxItemNotes = (index, notes) => {
     return (dispatch, getState, {getFirebase, getFirestore}) => {
         const firestore = getFirestore();
@@ -101,6 +103,7 @@ export const updateShoeboxItemNotes = (index, notes) => {
     }
 }
 
+// Deletes a shoebox item from the user's firestore data
 export const deleteShoeboxItem = (index) => { 
     return (dispatch, getState, {getFirebase, getFirestore}) => {
         const firestore = getFirestore();

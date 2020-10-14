@@ -86,7 +86,6 @@ const updateUserError = () => {
     }
 }
 
-
 export const loginUser = (email, password) => dispatch => {
     dispatch(requestLogin());
     myFirebase
@@ -96,7 +95,6 @@ export const loginUser = (email, password) => dispatch => {
         dispatch(receiveLogin(user));
       })
       .catch(error => {
-        //Do something with the error if you want!
         dispatch(loginError());
       });
   };
@@ -110,7 +108,6 @@ export const loginUser = (email, password) => dispatch => {
         dispatch(receiveLogout());
       })
       .catch(error => {
-        //Do something with the error if you want!
         dispatch(logoutError());
       });
   };
@@ -152,6 +149,7 @@ export const loginUser = (email, password) => dispatch => {
   };
 
   export const updateUser = (first, last) => {
+      console.log(first, last)
       return (dispatch, getState, {getFirebase, getFirestore}) => {
             const firebase = getFirebase();
             const firestore = getFirestore();
