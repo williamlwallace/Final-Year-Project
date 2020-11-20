@@ -50,7 +50,7 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isOpen: false,
+            isDialogOpen: false,
             isRegister: false,
             isProfile: false,
             isShoebox: false,
@@ -84,7 +84,7 @@ class Home extends Component {
 
     toggleDialog = () => {
         this.setState({
-            isOpen: !this.state.isOpen
+            isDialogOpen: !this.state.isDialogOpen
         });
     }
 
@@ -163,6 +163,7 @@ class Home extends Component {
                             <Typography variant="h6" gutterBottom color="inherit" className={classes.flex}>
 	                        Quoka
                             </Typography>
+                            {isAuthenticated ?
                             <Tooltip title="Shoebox" aria-label="Shoebox">
                                 <IconButton
                                     color={this.state.isShoebox ? 'inherit' : ''}
@@ -170,19 +171,20 @@ class Home extends Component {
                                     className={classes.menuButton}>
                                     <InboxIcon/>
                                 </IconButton>
-                            </Tooltip>
+                            </Tooltip> : ""
+                            }
                             
 	                    <SearchField />
-                        {isAuthenticated ? 
-                        [<Button variant="text" color="inherit" className={classes.menuButton} onClick={this.handleLogout}><Typography variant="button" gutterBottom>Logout</Typography></Button>,
-                        <Tooltip title="Profile" aria-label="Profile"><IconButton color={this.state.isProfile ? 'inherit' : ''} className={classes.menuButton} onClick={this.toggleProfile}><PersonIcon/></IconButton></Tooltip>]:
-                        <Button variant="text" color="inherit" className={classes.menuButton} onClick={this.toggleDialog}><Typography variant="button" gutterBottom>Login</Typography></Button>
-                        }
+                            {isAuthenticated ? 
+                                [<Button variant="text" color="inherit" className={classes.menuButton} onClick={this.handleLogout}><Typography variant="button" gutterBottom>Logout</Typography></Button>,
+                                <Tooltip title="Profile" aria-label="Profile"><IconButton color={this.state.isProfile ? 'inherit' : ''} className={classes.menuButton} onClick={this.toggleProfile}><PersonIcon/></IconButton></Tooltip>]:
+                                <Button variant="text" color="inherit" className={classes.menuButton} onClick={this.toggleDialog}><Typography variant="button" gutterBottom>Login</Typography></Button>
+                            }
                         </Toolbar>
                     </AppBar>
                     
-                    {/* <Login isOpen={this.state.isOpen} toggleDialog={this.toggleDialog}/> */}
-                    <Dialog open={this.state.isOpen} onClose={this.toggleDialog} aria-labelledby="form-dialog-title">
+                    {/* <Login isDialogOpen={this.state.isDialogOpen} toggleDialog={this.toggleDialog}/> */}
+                    <Dialog open={this.state.isDialogOpen} onClose={this.toggleDialog} aria-labelledby="form-dialog-title">
                     {this.state.isRegister ?
                         [<DialogTitle id="form-dialog-title">Register</DialogTitle>,
                                 <DialogContent>
@@ -264,7 +266,7 @@ class Home extends Component {
                             </Button>
                             <Button variant="contained" onClick={this.handleLogin} color="primary">
                                 Login
-                            </Button>:
+                            </Button>
                         </DialogActions>]
                     }
                     </Dialog>
