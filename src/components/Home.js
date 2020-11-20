@@ -124,16 +124,17 @@ class Home extends Component {
         const { dispatch } = this.props;
         const { firstName, lastName, email, password, confirmPassword } = this.state;
         if (password !== confirmPassword) {
-            this.setState({passwordError: true})
+            this.setState({passwordError: true});
         } else {
-            dispatch(createUser(firstName, lastName, email, password))
-            this.toggleDialog()     
+            dispatch(createUser(firstName, lastName, email, password));
+            this.toggleDialog();
+            this.toggleRegister();    
         }
     }
 
     handleLogout = () => {
         const { dispatch } = this.props;
-        this.setState({isProfile: false})
+        this.setState({isProfile: false});
         dispatch(logoutUser());
     };
 
@@ -160,7 +161,8 @@ class Home extends Component {
                     <AppBar className={classes.appBar}>
                         <Toolbar>
                             <Typography variant="h6" gutterBottom color="inherit" className={classes.flex}>
-	                        COKI Explorer
+	                        Quoka
+                            </Typography>
                             <Tooltip title="Shoebox" aria-label="Shoebox">
                                 <IconButton
                                     color={this.state.isShoebox ? 'inherit' : ''}
@@ -169,7 +171,6 @@ class Home extends Component {
                                     <InboxIcon/>
                                 </IconButton>
                             </Tooltip>
-                            </Typography>
                             
 	                    <SearchField />
                         {isAuthenticated ? 
@@ -263,7 +264,7 @@ class Home extends Component {
                             </Button>
                             <Button variant="contained" onClick={this.handleLogin} color="primary">
                                 Login
-                            </Button>
+                            </Button>:
                         </DialogActions>]
                     }
                     </Dialog>
