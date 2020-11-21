@@ -45,12 +45,18 @@ const styles = theme => ({
     },
 });
 
+const NONE = 0;
+const LOGIN = 1;
+const REGISTER = 2;
+const PROFILE = 3;
+
 class Home extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             isDialogOpen: false,
+            dialogType: NONE,
             isRegister: false,
             isProfile: false,
             isShoebox: false,
@@ -80,6 +86,18 @@ class Home extends Component {
 
     handleConfirmPasswordChange = ({ target }) => {
         this.setState({ confirmPassword: target.value });
+    };
+
+    openDialog = (type) => {
+        this.setState({ dialogType: type });
+        this.setState({ isDialogOpen: true });
+        if (type === PROFILE) {
+        }
+    };
+
+    closeDialog = () => {
+        this.setState({ isDialogOpen: false });
+        this.setState({ dialogType: NONE });
     };
 
     toggleDialog = () => {
@@ -117,7 +135,7 @@ class Home extends Component {
         const { dispatch } = this.props;
         const { email, password } = this.state;
         dispatch(loginUser(email, password));
-        this.toggleDialog()
+        this.closeDialog()
     };
 
     handleRegister = () => {
@@ -127,8 +145,8 @@ class Home extends Component {
             this.setState({passwordError: true});
         } else {
             dispatch(createUser(firstName, lastName, email, password));
-            this.toggleDialog();
-            this.toggleRegister();    
+            this.closeDialog();
+            //this.toggleRegister();    
         }
     }
 
@@ -154,6 +172,108 @@ class Home extends Component {
         };
 
         const { classes, isAuthenticated } = this.props;
+        const { dialogType } = this.state;
+        let dialogContents;
+        switch (dialogType) {
+            case LOGIN:
+                dialogContents = [
+                    <DialogTitle id="form-dialog-title">Login</DialogTitle>,
+                    <DialogContent>
+                        <TextField
+                             autoFocus
+                             id="emaillogin"
+                             label="Email"
+                             type="text"
+                             fullWidth
+                             onChange={this.handleEmailChange}
+                         />
+                         <TextField
+                             id="password"
+                             label="Password"
+                             type="password"
+                             fullWidth
+                             onChange={this.handlePasswordChange}
+                         />
+                     </DialogContent>,
+                     <DialogActions>
+                         <Button variant="text" onClick={() => this.openDialog(REGISTER)} color="primary">
+                             Register
+                         </Button>
+                         <Button variant="contained" onClick={this.handleLogin} color="primary">
+                             Login
+                         </Button>
+                     </DialogActions>
+                ];
+                break;
+            case REGISTER:
+                dialogContents = [
+                    <DialogTitle id="form-dialog-title">Register</DialogTitle>,
+                    <DialogContent>
+                    <TextField
+                        id="firstName"
+                        margin="dense"
+                        label="First Name"
+                        type="text"
+                        fullWidth
+                        onChange={this.handleChange}
+                    />
+                    <TextField
+                        id="lastName"
+                        margin="dense"
+                        label="Last Name"
+                        type="text"
+                        fullWidth
+                        onChange={this.handleChange}
+                    />
+                    <TextField
+                        name="email"
+                        margin="dense"
+                        label="Email"
+                        type="email"
+                        fullWidth
+                        onChange={(event) => this.handleEmailChange(event)}
+                    />
+                    <TextField
+                        name="password"
+                        margin="dense"
+                        label="Password"
+                        type="password"
+                        fullWidth
+                        error={this.state.passwordError}
+                        onChange={(event) => this.handlePasswordChange(event)}
+                    />
+                    <TextField
+                        name="confirmPassword"
+                        margin="dense"
+                        label="Confirm Password"
+                        type="password"
+                        fullWidth
+                        error={this.state.passwordError}
+                        onChange={(event) => this.handleConfirmPasswordChange(event)}
+                    />
+                    </DialogContent>,
+                    <DialogActions>
+                        <Button variant="text" onClick={() => this.openDialog(LOGIN)} color="primary">
+                            Back
+                        </Button>
+                        <Button variant="contained" onClick={this.handleRegister} color="primary">
+                            Create
+                        </Button>
+                    </DialogActions>
+                ];
+                break;
+            case PROFILE:
+                dialogContents = [
+                    <DialogTitle id="form-dialog-title">User profile</DialogTitle>,
+                    <DialogContent>
+                    </DialogContent>,
+                    <DialogActions>
+                    </DialogActions>
+                ];
+                break;
+            default:
+                dialogContents = "";
+        }
 
         return (        
             <div style={containerStyle}>
@@ -163,120 +283,35 @@ class Home extends Component {
                             <Typography variant="h6" gutterBottom color="inherit" className={classes.flex}>
 	                        Quoka
                             </Typography>
-                            {isAuthenticated ?
-                            <Tooltip title="Shoebox" aria-label="Shoebox">
-                                <IconButton
-                                    color={this.state.isShoebox ? 'inherit' : ''}
-                                    onClick={this.toggleShoebox} 
-                                    className={classes.menuButton}>
-                                    <InboxIcon/>
-                                </IconButton>
-                            </Tooltip> : ""
+                            { isAuthenticated ?
+                                <Tooltip title="Shoebox" aria-label="Shoebox">
+                                    <IconButton
+                                        color={this.state.isShoebox ? 'inherit' : ''}
+                                        onClick={this.toggleShoebox} 
+                                        className={classes.menuButton}>
+                                        <InboxIcon/>
+                                    </IconButton>
+                                </Tooltip> : ""
                             }
                             
 	                    <SearchField />
-                            {isAuthenticated ? 
+                            { isAuthenticated ? 
                                 [<Button variant="text" color="inherit" className={classes.menuButton} onClick={this.handleLogout}><Typography variant="button" gutterBottom>Logout</Typography></Button>,
-                                <Tooltip title="Profile" aria-label="Profile"><IconButton color={this.state.isProfile ? 'inherit' : ''} className={classes.menuButton} onClick={this.toggleProfile}><PersonIcon/></IconButton></Tooltip>]:
-                                <Button variant="text" color="inherit" className={classes.menuButton} onClick={this.toggleDialog}><Typography variant="button" gutterBottom>Login</Typography></Button>
+                                <Tooltip title="Profile" aria-label="Profile"><IconButton color={this.state.isProfile ? 'inherit' : ''} className={classes.menuButton} onClick={() => this.openDialog(PROFILE)}><PersonIcon/></IconButton></Tooltip>] :
+                                <Button variant="text" color="inherit" className={classes.menuButton} onClick={() => this.openDialog(LOGIN)}><Typography variant="button" gutterBottom>Login</Typography></Button>
                             }
                         </Toolbar>
                     </AppBar>
                     
                     {/* <Login isDialogOpen={this.state.isDialogOpen} toggleDialog={this.toggleDialog}/> */}
-                    <Dialog open={this.state.isDialogOpen} onClose={this.toggleDialog} aria-labelledby="form-dialog-title">
-                    {this.state.isRegister ?
-                        [<DialogTitle id="form-dialog-title">Register</DialogTitle>,
-                                <DialogContent>
-                                <TextField
-                                    id="firstName"
-                                    margin="dense"
-                                    label="First Name"
-                                    type="text"
-                                    fullWidth
-                                    onChange={this.handleChange}
-                                />
-                                <TextField
-                                    id="lastName"
-                                    margin="dense"
-                                    label="Last Name"
-                                    type="text"
-                                    fullWidth
-                                    onChange={this.handleChange}
-                                />
-                                <TextField
-                                    name="email"
-                                    margin="dense"
-                                    label="Email"
-                                    type="email"
-                                    fullWidth
-                                    onChange={(event) => this.handleEmailChange(event)}
-                                />
-                                <TextField
-                                    name="password"
-                                    margin="dense"
-                                    label="Password"
-                                    type="password"
-                                    fullWidth
-                                    error={this.state.passwordError}
-                                    onChange={(event) => this.handlePasswordChange(event)}
-                                />
-                                <TextField
-                                    name="confirmPassword"
-                                    margin="dense"
-                                    label="Confirm Password"
-                                    type="password"
-                                    fullWidth
-                                    error={this.state.passwordError}
-                                    onChange={(event) => this.handleConfirmPasswordChange(event)}
-                                />
-                                </DialogContent>,
-                                <DialogActions>
-                                    <Button variant="text" onClick={this.toggleRegister} color="primary">
-                                        Back
-                                    </Button>
-                                    <Button variant="contained" onClick={this.handleRegister} color="primary">
-                                        Create
-                                    </Button>
-                                </DialogActions>]
-                    :
-                        [<DialogTitle id="form-dialog-title">Login</DialogTitle>,
-                            <DialogContent>
-                            <TextField
-                                autoFocus
-                                id="emaillogin"
-                                label="Email"
-                                type="text"
-                                fullWidth
-                                onChange={this.handleEmailChange}
-                            />
-                            <TextField
-                                id="password"
-                                label="Password"
-                                type="password"
-                                fullWidth
-                                onChange={this.handlePasswordChange}
-                            />
-
-
-                            </DialogContent>,
-                            <DialogActions>
-                            <Button variant="text" onClick={this.toggleRegister} color="primary">
-                                Register
-                            </Button>
-                            <Button variant="contained" onClick={this.handleLogin} color="primary">
-                                Login
-                            </Button>
-                        </DialogActions>]
-                    }
+                    <Dialog open={this.state.isDialogOpen} onClose={this.closeDialog} aria-labelledby="form-dialog-title">
+                      { dialogContents }
                     </Dialog>
-                    {isAuthenticated ? <Profile/> : ""}      
                 </div>
-                {this.state.isProfile ? "" : [<Map />,
-                <Timeline />,
-                <TopNResults />,
-                <Shoebox isShoebox={this.state.isShoebox} />]}
-                
+                <Map />
+                <Timeline />
+                <TopNResults />
+                <Shoebox isShoebox={this.state.isShoebox} />
             </div>
 	);
     }

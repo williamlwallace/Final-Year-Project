@@ -8,8 +8,6 @@ import TextField from '@material-ui/core/TextField'
 import { updateUser } from '../store/actions/authActions';
 import { FullscreenExit } from '@material-ui/icons';
 
-
-
 const styles = theme => ({
     root: {
         margin: 100,
