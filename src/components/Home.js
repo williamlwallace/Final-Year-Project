@@ -177,8 +177,8 @@ class Home extends Component {
         switch (dialogType) {
             case LOGIN:
                 dialogContents = [
-                    <DialogTitle id="form-dialog-title">Login</DialogTitle>,
-                    <DialogContent>
+                    <DialogTitle key="dialog-title-login" id="form-dialog-title">Login</DialogTitle>,
+                    <DialogContent key="dialog-content-login>
                         <TextField
                              autoFocus
                              id="emaillogin"
@@ -195,7 +195,7 @@ class Home extends Component {
                              onChange={this.handlePasswordChange}
                          />
                      </DialogContent>,
-                     <DialogActions>
+                     <DialogActions key="dialog-actions-login>
                          <Button variant="text" onClick={() => this.openDialog(REGISTER)} color="primary">
                              Register
                          </Button>
@@ -207,8 +207,8 @@ class Home extends Component {
                 break;
             case REGISTER:
                 dialogContents = [
-                    <DialogTitle id="form-dialog-title">Register</DialogTitle>,
-                    <DialogContent>
+                    <DialogTitle key="dialog-title-register" id="form-dialog-title">Register</DialogTitle>,
+                    <DialogContent key="dialog-content-register">
                     <TextField
                         id="firstName"
                         margin="dense"
@@ -252,7 +252,7 @@ class Home extends Component {
                         onChange={(event) => this.handleConfirmPasswordChange(event)}
                     />
                     </DialogContent>,
-                    <DialogActions>
+                    <DialogActions key="dialog-actions-register">
                         <Button variant="text" onClick={() => this.openDialog(LOGIN)} color="primary">
                             Back
                         </Button>
@@ -264,10 +264,10 @@ class Home extends Component {
                 break;
             case PROFILE:
                 dialogContents = [
-                    <DialogTitle id="form-dialog-title">User profile</DialogTitle>,
-                    <DialogContent>
+                    <DialogTitle key="dialog-title-profile" id="form-dialog-title">User profile</DialogTitle>,
+                    <DialogContent key="dialog-content-profile">
                     </DialogContent>,
-                    <DialogActions>
+                    <DialogActions key="dialog-actions-profile">
                     </DialogActions>
                 ];
                 break;
