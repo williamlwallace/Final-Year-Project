@@ -178,7 +178,7 @@ class Home extends Component {
             case LOGIN:
                 dialogContents = [
                     <DialogTitle key="dialog-title-login" id="form-dialog-title">Login</DialogTitle>,
-                    <DialogContent key="dialog-content-login>
+                    <DialogContent key="dialog-content-login">
                         <TextField
                              autoFocus
                              id="emaillogin"
@@ -195,7 +195,7 @@ class Home extends Component {
                              onChange={this.handlePasswordChange}
                          />
                      </DialogContent>,
-                     <DialogActions key="dialog-actions-login>
+                     <DialogActions key="dialog-actions-login">
                          <Button variant="text" onClick={() => this.openDialog(REGISTER)} color="primary">
                              Register
                          </Button>
@@ -296,8 +296,8 @@ class Home extends Component {
                             
 	                    <SearchField />
                             { isAuthenticated ? 
-                                [<Button variant="text" color="inherit" className={classes.menuButton} onClick={this.handleLogout}><Typography variant="button" gutterBottom>Logout</Typography></Button>,
-                                <Tooltip title="Profile" aria-label="Profile"><IconButton color={this.state.isProfile ? 'inherit' : ''} className={classes.menuButton} onClick={() => this.openDialog(PROFILE)}><PersonIcon/></IconButton></Tooltip>] :
+                                [<Button key="button-logout" variant="text" color="inherit" className={classes.menuButton} onClick={this.handleLogout}><Typography variant="button" gutterBottom>Logout</Typography></Button>,
+                                <Tooltip key="tooltip-profile" title="Profile" aria-label="Profile"><IconButton color={this.state.isProfile ? 'inherit' : ''} className={classes.menuButton} onClick={() => this.openDialog(PROFILE)}><PersonIcon/></IconButton></Tooltip>] :
                                 <Button variant="text" color="inherit" className={classes.menuButton} onClick={() => this.openDialog(LOGIN)}><Typography variant="button" gutterBottom>Login</Typography></Button>
                             }
                         </Toolbar>
